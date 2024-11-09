@@ -296,9 +296,11 @@ template-editor.aPanel.aView.flexrow(class="{opts.class} {demonstrationmode: dem
         svg.feather.template-editor-aSlidingEventListIcon.unclickable
             use(xlink:href="#plus")
     .template-editor-aCodeEditor(class="{demonstrationmode: demonstrationMode}")
-        .aPanel.center(if="{demonstrationMode}")
+        .aDemonstrationTitle.center(if="{demonstrationMode}")
             svg.feather
                 use(xlink:href="#template")
+            |
+            |
             | {asset.name}
             |
             |
@@ -316,18 +318,19 @@ template-editor.aPanel.aView.flexrow(class="{opts.class} {demonstrationmode: dem
     .template-editor-Properties.nmr(if="{localStorage.altTemplateLayout !== 'on' && !minimizeProps && !demonstrationMode}")
         .tall.aPanel.pad.npt
             +templateProperties()
-    button.toright.template-editor-aPresentationButton.square.tiny(
-        onclick="{toggleProps}"
-        if="{localStorage.altTemplateLayout !== 'on'}"
-    )
-        svg.feather
-            use(xlink:href="#{minimizeProps ? 'maximize-2' : 'minimize-2'}")
-    button.toright.template-editor-aPresentationButton.square.tiny(
-        onclick="{toggleCatnipDemonstration}"
-        if="{currentProject.language === 'catnip'}"
-    )
-        svg.feather
-            use(xlink:href="#screen")
+    .aButtonGroup.template-editor-PresentationButtons
+        button.square.tiny(
+            onclick="{toggleDemonstration}"
+            if="{currentProject.language === 'catnip'}"
+        )
+            svg.feather
+                use(xlink:href="#screen")
+        button.square.tiny(
+            onclick="{toggleProps}"
+            if="{localStorage.altTemplateLayout !== 'on'}"
+        )
+            svg.feather
+                use(xlink:href="#{minimizeProps ? 'maximize-2' : 'minimize-2'}")
     script.
         this.namespace = 'templateView';
         this.mixin(require('src/node_requires/riotMixins/voc').default);
@@ -521,20 +524,10 @@ template-editor.aPanel.aView.flexrow(class="{opts.class} {demonstrationmode: dem
         };
 
         this.demonstrationMode = false;
-        this.toggleCatnipDemonstration = () => {
+        this.toggleDemonstration = () => {
             this.demonstrationMode = !this.demonstrationMode;
         };
         const eventsAPI = require('src/node_requires/events');
         this.allEvents = eventsAPI.events;
         this.getEventByLib = eventsAPI.getEventByLib;
-        this.getIsParametrized = scriptableEvt => {
-            const event = this.getEventByLib(scriptableEvt.eventKey, scriptableEvt.lib);
-            return event.arguments && Object.keys(event.arguments).length;
-        };
-        const getFullKey = scriptableEvt => `${scriptableEvt.lib}_${scriptableEvt.eventKey}`;
-        this.localizeName = scriptableEvt => {
-            if (this.getIsParametrized(scriptableEvt)) {
-                return eventsAPI.localizeParametrized(eventsAPI.getFullKey(scriptableEvt), scriptableEvt);
-            }
-            return eventsAPI.localizeProp(eventsAPI.getFullKey(scriptableEvt), 'name');
-        };
+        this.localizeName = eventsAPI.localizeEventName;

@@ -1,5 +1,5 @@
-behavior-editor.aPanel.aView.flexrow
-    .behavior-editor-Properties.nml
+behavior-editor.aPanel.aView.flexrow(class="{opts.class} {demonstrationmode: demonstrationMode}")
+    .behavior-editor-Properties.nml(if="{!demonstrationMode}")
         .tall.flexfix.aPanel.pad
             .flexfix-header
                 button.wide(onclick="{openFields}")
@@ -22,11 +22,22 @@ behavior-editor.aPanel.aView.flexrow
                     svg.feather
                         use(xlink:href="#check")
                     span {vocGlob.apply}
-    .behavior-editor-anEditorPanel
+    .behavior-editor-aCodeEditor(class="{demonstrationmode: demonstrationMode}")
+        .aDemonstrationTitle.center(if="{demonstrationMode}")
+            svg.feather
+                use(xlink:href="#behavior")
+            |
+            |
+            | {asset.name}
+            |
+            |
+            span(if="{currentSheet}") —
+            |
+            |
+            span(if="{currentSheet}") {localizeName(currentSheet)}
         .tabwrap.tall(style="position: relative" if="{currentSheet !== 'fields'}")
-            div
-                .tabbed.noborder
-                    code-editor-scriptable(event="{currentSheet}" asset="{asset}")
+            .tabbed.noborder
+                code-editor-scriptable(event="{currentSheet}" asset="{asset}")
         .aPanel.tall.pad(if="{currentSheet === 'fields'}")
             h1 {voc.customFields}
             p {voc.customFieldsDescription}
@@ -36,6 +47,10 @@ behavior-editor.aPanel.aView.flexrow
                 b {vocFull.scriptables.typedefs}
                 hover-hint(text="{vocFull.scriptables.typedefsHint}")
                 textarea.code.wide(style="min-height: 10rem;" value="{asset.extendTypes}" onchange="{wire('asset.extendTypes')}")
+    .aButtonGroup.behavior-editor-PresentationButtons(if="{currentProject.language === 'catnip'}")
+        button.square.tiny(onclick="{toggleDemonstration}")
+            svg.feather
+                use(xlink:href="#screen")
     script.
         this.namespace = 'behaviorEditor';
         this.mixin(require('src/node_requires/riotMixins/voc').default);
@@ -80,3 +95,12 @@ behavior-editor.aPanel.aView.flexrow
         this.on('unmount', () => {
             window.orders.off('forceCodeEditorLayout', update);
         });
+
+        this.demonstrationMode = false;
+        this.toggleDemonstration = () => {
+            this.demonstrationMode = !this.demonstrationMode;
+        };
+        const eventsAPI = require('src/node_requires/events');
+        this.allEvents = eventsAPI.events;
+        this.getEventByLib = eventsAPI.getEventByLib;
+        this.localizeName = eventsAPI.localizeEventName;

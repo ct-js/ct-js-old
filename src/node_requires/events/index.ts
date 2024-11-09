@@ -88,6 +88,12 @@ type EventMenu = {
     items: IEventMenuSubmenu[];
 };
 
+
+export const getFullKey = (scriptableEvt: IScriptableEvent) => `${scriptableEvt.lib}_${scriptableEvt.eventKey}`;
+
+const getEventByLib = (event: string, libName: string): IEventDeclaration | undefined =>
+    events[`${libName}_${event}`];
+
 const localizeCategoryName = (categoryKey: string): string => {
     const i18nScriptables = getLanguageJSON().scriptables;
     const category = categories[categoryKey];
@@ -96,6 +102,22 @@ const localizeCategoryName = (categoryKey: string): string => {
     }
     return localizeField(category, 'name');
 };
+
+export const getIsParametrized = (scriptableEvt: IScriptableEvent) => {
+    const event = getEventByLib(scriptableEvt.eventKey, scriptableEvt.lib);
+    if (!event) {
+        throw new Error(`Event "${getFullKey(scriptableEvt)}" was not found.`);
+    }
+    return event.arguments && Object.keys(event.arguments).length;
+};
+export const getHasLocalVars = (scriptableEvt: IScriptableEvent) => {
+    const event = getEventByLib(scriptableEvt.eventKey, scriptableEvt.lib);
+    if (!event) {
+        throw new Error(`Event "${getFullKey(scriptableEvt)}" was not found.`);
+    }
+    return event.locals && Object.keys(event.locals).length;
+};
+
 const timerPattern = /^Timer(\d)$/;
 const propToCoreDictionary = {
     category: 'coreEventsCategories',
@@ -153,6 +175,13 @@ const localizeLocalVarDesc = (eventFullCode: string, local: string): string => {
     }
     return localizeField(event.locals![local], 'description');
 };
+export const localizeEventName = (scriptableEvt: IScriptableEvent) => {
+    if (getIsParametrized(scriptableEvt)) {
+        return localizeParametrized(getFullKey(scriptableEvt), scriptableEvt);
+    }
+    return localizeProp(getFullKey(scriptableEvt), 'name');
+};
+
 const tryGetIcon = (eventFullCode: string, scriptedEvent: IScriptableEvent): string | false => {
     const event = events[eventFullCode];
     if (!event.useAssetThumbnail) {
@@ -238,11 +267,6 @@ const bakeCategories = function bakeCategories(
     menu.items = menu.items.filter(cat => cat.submenu.items.length);
     return menu;
 };
-
-export const getFullKey = (scriptableEvt: IScriptableEvent) => `${scriptableEvt.lib}_${scriptableEvt.eventKey}`;
-
-const getEventByLib = (event: string, libName: string): IEventDeclaration | undefined =>
-    events[`${libName}_${event}`];
 
 const getArgumentsTypeScript = (event: IEventDeclaration): string => {
     let code = '';

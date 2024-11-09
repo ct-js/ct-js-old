@@ -121,13 +121,9 @@ event-list-scriptable.flexfix(class="{opts.class}")
 
         this.isValid = scriptableEvt =>
             this.getEventByLib(scriptableEvt.eventKey, scriptableEvt.lib);
-        this.localizeName = scriptableEvt => {
-            if (this.getIsParametrized(scriptableEvt)) {
-                return eventsAPI.localizeParametrized(eventsAPI.getFullKey(scriptableEvt), scriptableEvt);
-            }
-            return eventsAPI.localizeProp(eventsAPI.getFullKey(scriptableEvt), 'name');
-        };
-        this.getIcon = scriptableEvt => eventsAPI.tryGetIcon(eventsAPI.getFullKey(scriptableEvt), scriptableEvt);
+        this.localizeName = eventsAPI.localizeEventName;
+        this.getIcon = scriptableEvt =>
+            eventsAPI.tryGetIcon(eventsAPI.getFullKey(scriptableEvt), scriptableEvt);
         this.isStatic = scriptableEvt => !eventsAPI
             .canBeDynamicBehavior(eventsAPI.getEventByLib(scriptableEvt.eventKey, scriptableEvt.lib));
         this.isRestricted = scriptableEvt => !eventsAPI
@@ -144,14 +140,8 @@ event-list-scriptable.flexfix(class="{opts.class}")
         this.namespace = 'scriptables';
         this.mixin(require('src/node_requires/riotMixins/voc').default);
 
-        this.getIsParametrized = scriptableEvt => {
-            const event = this.getEventByLib(scriptableEvt.eventKey, scriptableEvt.lib);
-            return event.arguments && Object.keys(event.arguments).length;
-        };
-        this.getHasLocalVars = scriptableEvt => {
-            const event = this.getEventByLib(scriptableEvt.eventKey, scriptableEvt.lib);
-            return event.locals && Object.keys(event.locals).length;
-        };
+        this.getIsParametrized = eventsAPI.getIsParametrized;
+        this.getHasLocalVars = eventsAPI.getIsParametrized;
         this.getLocals = scriptableEvt => this.getEventByLib(
             scriptableEvt.eventKey,
             scriptableEvt.lib
