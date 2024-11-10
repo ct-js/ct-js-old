@@ -39,7 +39,7 @@ export const spawnNeutralino = async (args: string[]) => {
         throw new Error(`Unsupported platform or architecture: ${process.platform} ${process.arch}`);
     }
     // eslint-disable-next-line no-console
-    console.log('⚛️🥟 Running Neutralino in dev mode 🥟⚛️');
+    console.log('🥟⚛️ Running Neutralino in dev mode 🚧');
     // Use the downloaded binary created by `neu install`
     return Bun.spawn([
         `${process.cwd()}/bin/neutralino-${match.neutralinoPostfix}`,

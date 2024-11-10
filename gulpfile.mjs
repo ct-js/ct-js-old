@@ -375,8 +375,8 @@ const watch = () => {
 
 const debugUrl = '127.0.0.1:6499/debug';
 const launchApp = () => $({
-    stderr: 'pipe',
-    stdout: 'pipe'
+    stderr: 'inherit',
+    stdout: 'inherit'
 })`bun run ./src/bun/index.js`;
 
 const launchDevMode = done => {
@@ -455,7 +455,6 @@ export const getBuiltPackagePath = (pf) => path.join('./build', `ctjs - v${neutr
 // -------------------------------------------------- //
 
 import {bakeDocs} from './devSetup.gulpfile.mjs';
-import { stderr } from 'process';
 
 export const patronsCache = async () => {
     const file = await fetch('https://ctjs.rocks/staticApis/patrons.json').then(res => res.text());

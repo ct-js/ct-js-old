@@ -12,13 +12,25 @@ const readyPromise = new Promise<void>((resolve, reject) => {
     const Neutralino = window.Neutralino ?? await import('@neutralinojs/lib');
     Neutralino.events.on('ready', () => {
         try {
-            const match = window.NL_ARGS.find(a => a.startsWith('--buntralino-hook='));
-            if (!match) {
+            const match1 = window.NL_ARGS.find(a => a.startsWith('--buntralino-port=')),
+                  match2 = window.NL_ARGS.find(a => a.startsWith('--buntralino-name='));
+            if (!match1 || !match2) {
                 return;
             }
-            const [, id] = match.split('=');
+            const [, port] = match1.split('=');
+            const [, name] = match2.split('=');
             const neuToken = NL_TOKEN || sessionStorage.NL_TOKEN;
-            Neutralino.app.writeProcessOutput(`⚛️;id=${id};port=${NL_PORT};token=${neuToken};⚛️\n`);
+            bunWs = new WebSocket(`ws://localhost:${port}`);
+            bunWs.onopen = () => {
+                // eslint-disable-next-line no-console
+                console.debug('⚛️ Announcing ourself to Buntralino…');
+                bunWs.send(JSON.stringify({
+                    command: 'announceSelf',
+                    name,
+                    NL_PORT,
+                    NL_TOKEN: neuToken
+                }));
+            };
 
             const listener = (payload: {
                 detail: {
@@ -33,14 +45,44 @@ const readyPromise = new Promise<void>((resolve, reject) => {
                 bunToken = payload.detail.token;
                 bunPort = payload.detail.port;
                 bunWs = new WebSocket(`ws://localhost:${bunPort}`);
-                readyResolve();
-                // eslint-disable-next-line no-console
-                console.log('⚛️🥟 Buntralino connected');
+                bunWs.onopen = () => {
+                    // eslint-disable-next-line no-console
+                    console.log('⚛️🥟 Buntralino connected');
+                    readyResolve();
+                };
             };
             Neutralino.events.on('buntralinoRegisterParent', listener);
+
+            const executor = async (payload: {
+                detail: {
+                    js: string,
+                    requestId: string
+                }
+            }) => {
+                try {
+                    // eslint-disable-next-line no-eval
+                    const val = await (0, eval)(payload.detail.js);
+                    // ⬆️ (0, eval) is used to execute the code in global scope
+                    bunWs.send(JSON.stringify({
+                        token: bunToken,
+                        command: 'execResult',
+                        id: payload.detail.requestId,
+                        returnValue: val
+                    }));
+                } catch (e) {
+                    bunWs.send(JSON.stringify({
+                        token: bunToken,
+                        command: 'execResult',
+                        id: payload.detail.requestId,
+                        error: e.message,
+                        stack: e.stack
+                    }));
+                }
+            };
+            Neutralino.events.on('buntralinoEval', executor);
         } catch (error) {
             readyReject(error);
-            console.error('⚛️🥟 Buntralino failed with', error);
+            console.error('⚛️ Buntralino failed with', error);
         }
     });
 })();

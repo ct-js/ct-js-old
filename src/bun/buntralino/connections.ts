@@ -1,9 +1,9 @@
 export type Connection = {
     ws: WebSocket,
-    process: Subprocess<'pipe', 'pipe', 'pipe'>,
     port: number,
     neuToken: string,
-    bunToken: string
+    bunToken: string,
+    name: string
 };
 
 export const connections = new Map<string, Connection>();

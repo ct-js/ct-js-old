@@ -5,12 +5,21 @@ import {getUid} from './utils';
 import type {Connection} from './connections';
 // eslint-disable-next-line no-duplicate-imports
 import {dropConnection, registerConnection, getConnectionByToken, connections} from './connections';
+import {evalsMap} from './evals';
 
 export {
     registerMethod,
     registerMethodMap
 } from './methodLibrary';
 export * from './window';
+
+interface WindowOptions {
+    name?: string;
+    useSavedState?: boolean;
+    [key: string]: unknown
+}
+
+const awaitedNames = new Set<string>();
 
 // This websocket server is used by Neutralino to run commands in Bun.
 const receiver = Bun.serve({
@@ -28,6 +37,33 @@ const receiver = Bun.serve({
         // this is called when a message is received
         async message(ws, message) {
             const payload = JSON.parse(message as string);
+            if (payload.command === 'announceSelf') {
+                if (!payload.NL_PORT || !payload.NL_TOKEN || !payload.name) {
+                    throw new Error('🥟 Invalid payload for announceSelf: ', payload);
+                }
+                if (!awaitedNames.has(payload.name)) {
+                    throw new Error('🥟 Attempt to announce a window we didn\'t create! Fishy!');
+                }
+                const wsToken = payload.NL_TOKEN.split('.').pop();
+                const wsHref = `ws://localhost:${payload.NL_PORT}?connectToken=${wsToken}`;
+                const ws = new WebSocket(wsHref);
+                const connection: Connection = {
+                    ws,
+                    port: parseInt(payload.NL_PORT, 10),
+                    neuToken: payload.NL_TOKEN,
+                    bunToken: getUid(),
+                    name: payload.name
+                };
+                ws.onopen = () => {
+                    registerConnection(payload.name, connection);
+                    neuWindow.sendEvent(connection, 'buntralinoRegisterParent', {
+                        token: connection.bunToken,
+                        port: receiver.port
+                    });
+                    console.log(`🥟 Registered ${payload.name} window 💅`);
+                };
+                return;
+            }
             const connection = getConnectionByToken(payload.token);
             if (!connection) {
                 ws.send(JSON.stringify({
@@ -55,18 +91,21 @@ const receiver = Bun.serve({
                 // eslint-disable-next-line no-process-exit
                 process.exit(0);
             } else if (payload.command === 'evalResult') {
-                
+                const [resolve, reject] = evalsMap.get(payload.id)!;
+                if (payload.error) {
+                    const err = new Error('🥟🐞 evalJs failed for ' + connection.name + ': ' + payload.error +
+                        '\n\nClient-side stack trace:\n' + payload.stack);
+                    reject(err);
+                } else {
+                    resolve(payload.returnValue);
+                }
+                evalsMap.delete(payload.id);
             }
         }
     }
 });
 
-interface WindowOptions {
-    name?: string;
-    useSavedState?: boolean;
-    [key: string]: unknown
-}
-
+console.log('🥟👂 Bun server listening on port ', receiver.port);
 
 const normalizeArgument = (arg: any) => {
     if (typeof arg !== 'string') {
@@ -84,6 +123,7 @@ export const create = async (url: string, options = {} as WindowOptions): Promis
         .toString(36)
         .slice(2, 9));
     const name = options.name ?? id;
+    awaitedNames.add(name);
 
     options = {
         useSavedState: false,
@@ -99,43 +139,15 @@ export const create = async (url: string, options = {} as WindowOptions): Promis
     }
 
     const proc = await spawnNeutralino([
-        '--buntralino-hook=' + id,
+        '--buntralino-port=' + receiver.port,
+        '--buntralino-name=' + name,
         `--url=${url}`,
         ...args
     ]);
     proc.exited.then(() => {
-        console.log('Neutralino process exited with code', proc.exitCode);
+        console.log('🥟🪦 Neutralino process exited with code', proc.exitCode);
         dropConnection(name);
     });
-    for await (const chunk of proc.readable) {
-        const line = chunk.toString('utf8').trim();
-        console.log('received', line, chunk);
-        if (!line.startsWith('⚛️')) {
-            continue;
-        }
-        // Turn a line into an object
-        const response = line.split(';').reduce((acc, val) => {
-            const [key, value] = val.split('=');
-            acc[key] = value;
-            return acc;
-        }, {} as Record<string, string>);
-        if (response.id === id && response.port && response.token) {
-            const ws = new WebSocket(`ws://localhost:${response.port}`);
-            const connection: Connection = {
-                ws,
-                process: proc,
-                port: parseInt(response.port, 10),
-                neuToken: response.token,
-                bunToken: getUid()
-            };
-            registerConnection(name, connection);
-            neuWindow.sendEvent(connection, 'buntralinoRegisterParent', {
-                token: connection.bunToken,
-                port: receiver.port
-            });
-            break;
-        }
-    }
 
     return id;
 };

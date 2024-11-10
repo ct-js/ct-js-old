@@ -2,7 +2,7 @@ import {getUid} from './utils';
 import type {Connection} from './connections';
 // eslint-disable-next-line no-duplicate-imports
 import {getConnectionByName} from './connections';
-import {evalsMap} from './evals';
+import {evalsMap, type PromiseRejectCallback, type PromiseResolveCallback} from './evals';
 
 const ensureConnection = (target: Connection | string): Connection => {
     if (typeof target === 'string') {
@@ -39,8 +39,8 @@ export const sendNeuMethod = (connection: Connection, method: string, payload?: 
     });
 };
 export const sendEvent = (connection: Connection, event: string, payload: unknown) => {
-    sendNeuMethod(connection, 'events.dispatch', {
-        eventName: event,
+    sendNeuMethod(connection, 'events.broadcast', {
+        event,
         // eslint-disable-next-line id-blacklist
         data: payload
     });
