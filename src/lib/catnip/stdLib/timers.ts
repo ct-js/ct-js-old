@@ -37,11 +37,35 @@ const makeTimerGetter = (index: number): IBlockComputedDeclaration => ({
 });
 
 const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [];
+const setters: IBlockCommandDeclaration[] = [],
+      getters: IBlockComputedDeclaration[] = [];
+
 for (let i = 1; i <= 6; i++) {
-    blocks.push(makeTimerSetter(i));
+    const block = makeTimerSetter(i);
+    blocks.push(block);
+    setters.push(block);
 }
 for (let i = 1; i <= 6; i++) {
-    blocks.push(makeTimerGetter(i));
+    const block = makeTimerGetter(i);
+    blocks.push(block);
+    getters.push(block);
+}
+
+for (const getter of getters) {
+    getter.mutators = getters
+        .filter(m => m.code !== getter.code)
+        .map(g => ({
+            lib: g.lib,
+            code: g.code
+        }));
+}
+for (const setter of setters) {
+    setter.mutators = setters
+        .filter(m => m.code !== setter.code)
+        .map(s => ({
+            lib: s.lib,
+            code: s.code
+        }));
 }
 
 export default blocks;

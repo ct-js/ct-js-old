@@ -43,8 +43,8 @@ window.ctIdeStartup = async () => {
         const emSize = Number(localStorage.emSize);
         document.body.parentElement.style.fontSize = document.body.style.fontSize = `${emSize}px`;
         document.body.parentElement.style.lineHeight = document.body.style.lineHeight = `${emSize * 2}px`;
-        // Registers a debug event listener for bun responses.
-        require('src/lib/bunchat');
+
+        require('src/lib/buntralino-client');
     }
 
     // Mount riot components.

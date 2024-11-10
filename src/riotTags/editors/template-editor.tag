@@ -229,8 +229,8 @@ mixin eventsList
         currentevent="{currentSheet}"
     ).tall
 
-template-editor.aPanel.aView.flexrow
-    .template-editor-Properties.nml(class="{alt: localStorage.altTemplateLayout === 'on'}")
+template-editor.aPanel.aView.flexrow(class="{opts.class} {demonstrationmode: demonstrationMode}")
+    .template-editor-Properties.nml(class="{alt: localStorage.altTemplateLayout === 'on'}" if="{!demonstrationMode}")
         .tall.flexfix.aPanel.pad
             .flexfix-header
                 // Main linked asset of a template
@@ -295,24 +295,42 @@ template-editor.aPanel.aView.flexrow
                 +eventsList()
         svg.feather.template-editor-aSlidingEventListIcon.unclickable
             use(xlink:href="#plus")
-    .template-editor-aCodeEditor
+    .template-editor-aCodeEditor(class="{demonstrationmode: demonstrationMode}")
+        .aDemonstrationTitle.center(if="{demonstrationMode}")
+            svg.feather
+                use(xlink:href="#template")
+            |
+            |
+            | {asset.name}
+            |
+            |
+            span(if="{currentSheet}") —
+            |
+            |
+            span(if="{currentSheet}") {localizeName(currentSheet)}
         .tabwrap.tall(style="position: relative")
-            div
-                .tabbed.noborder(show="{tab === 'javascript'}")
-                    code-editor-scriptable(
-                        event="{currentSheet}"
-                        entitytype="template"
-                        asset="{asset}"
-                    )
-    .template-editor-Properties.nmr(if="{localStorage.altTemplateLayout !== 'on' && !minimizeProps}")
+            .tabbed.noborder
+                code-editor-scriptable(
+                    event="{currentSheet}"
+                    entitytype="template"
+                    asset="{asset}"
+                )
+    .template-editor-Properties.nmr(if="{localStorage.altTemplateLayout !== 'on' && !minimizeProps && !demonstrationMode}")
         .tall.aPanel.pad.npt
             +templateProperties()
-    button.toright.template-editor-aPresentationButton.square.tiny(
-        onclick="{toggleProps}"
-        if="{localStorage.altTemplateLayout !== 'on'}"
-    )
-        svg.feather
-            use(xlink:href="#{minimizeProps ? 'maximize-2' : 'minimize-2'}")
+    .aButtonGroup.template-editor-PresentationButtons
+        button.square.tiny(
+            onclick="{toggleDemonstration}"
+            if="{currentProject.language === 'catnip'}"
+        )
+            svg.feather
+                use(xlink:href="#screen")
+        button.square.tiny(
+            onclick="{toggleProps}"
+            if="{localStorage.altTemplateLayout !== 'on'}"
+        )
+            svg.feather
+                use(xlink:href="#{minimizeProps ? 'maximize-2' : 'minimize-2'}")
     script.
         const {write} = require('src/lib/neutralino-storage');
 
@@ -327,7 +345,6 @@ template-editor.aPanel.aView.flexrow
 
         this.getTextureRevision = template => resources.getById(template.texture).lastmod;
 
-        this.tab = 'javascript';
         [this.currentSheet] = this.asset.events; // can be undefined, this is ok
 
         const {schemaToExtensions} = require('src/lib/resources/content');
@@ -373,9 +390,6 @@ template-editor.aPanel.aView.flexrow
             this.refs.baseClassMenu.toggle();
         };
 
-        this.changeTab = tab => () => {
-            this.tab = tab;
-        };
         this.applyTexture = id => {
             if (id === -1) {
                 this.asset.texture = -1;
@@ -510,3 +524,12 @@ template-editor.aPanel.aView.flexrow
             write('minimizeTemplatesProps', this.minimizeProps ? 'yes' : 'no');
             window.orders.trigger('forceCodeEditorLayout');
         };
+
+        this.demonstrationMode = false;
+        this.toggleDemonstration = () => {
+            this.demonstrationMode = !this.demonstrationMode;
+        };
+        const eventsAPI = require('src/lib/events');
+        this.allEvents = eventsAPI.events;
+        this.getEventByLib = eventsAPI.getEventByLib;
+        this.localizeName = eventsAPI.localizeEventName;

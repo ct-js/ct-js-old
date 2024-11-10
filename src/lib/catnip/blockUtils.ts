@@ -93,8 +93,12 @@ export const convertFromDtsToBlocks = (usefuls: usableDeclaration[], lib: 'core'
                         name = node.comment.toString();
                     } else if (String(node.tagName.escapedText).startsWith('catnipName_') && node.comment) {
                         // Localized names for this block
-                        const key = String(node.tagName.escapedText).replace('catnipName_', 'name_');
+                        const key = String(node.tagName.escapedText).replace('catnipName_', 'name_'),
+                              displayNameKey = String(node.tagName.escapedText).replace('catnipName_', 'displayName_');
                         extraNames[key] = node.comment.toString().trim();
+                        if (!extraNames[displayNameKey]) {
+                            extraNames[displayNameKey] = extraNames[key];
+                        }
                     } else if (String(node.tagName.escapedText).startsWith('catnipLabel_') && node.comment) {
                         // Localized display names for this block
                         const key = String(node.tagName.escapedText).replace('catnipLabel_', 'displayName_');

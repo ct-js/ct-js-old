@@ -1,6 +1,6 @@
 export default [{
     name: 'Move this copy along a line stopping at',
-    name_Ru: 'Переместить эту копию по линии, останавливаясь перед',
+    name_Ru: 'Переместиться по линии, останавливаясь перед группой',
     type: 'command',
     code: 'move template bullet',
     icon: 'move',
@@ -29,7 +29,7 @@ export default [{
     }
 }, {
     name: 'Move this copy stopping at',
-    name_Ru: 'Переместить эту копию, останавливаясь перед',
+    name_Ru: 'Переместиться, останавливаясь перед группой',
     type: 'command',
     code: 'move template smart',
     icon: 'move',

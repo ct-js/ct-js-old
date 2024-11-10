@@ -1,4 +1,11 @@
-// $ comigoji-changelog ./comigojiChangelog.js > Changelog.md
+/*
+To append to the current changelog:
+
+cat ./app/Changelog.md > ./app/Changelog.md.old
+comigoji-changelog ./comigojiChangelog.js > ./app/Changelog.md
+cat ./app/Changelog.md.old >> ./app/Changelog.md
+rm ./app/Changelog.md.old
+*/
 
 const gitCommand = 'git log --max-count=1 --tags --simplify-by-decoration --pretty="format:%cI"';
 const {exec} = require('child_process');

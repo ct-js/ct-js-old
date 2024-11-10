@@ -293,6 +293,16 @@ const openProject = async (proj: string): Promise<void | false | Promise<void>> 
         void 0;
     }
     if (recoveryStat && recoveryStat.isFile()) {
+        // Make sure recovery and target files are not the same
+        const [recoveryContent, targetContent] = await Promise.all([
+            fs.readFile(proj + '.recovery', 'utf8'),
+            fs.readFile(proj, 'utf8')
+        ]);
+        if (recoveryContent === targetContent) {
+            // Files match, load as usual
+            return readProjectFile(proj);
+        }
+        // Files differ, ask user if they want to load the recovery file
         const targetStat = await fs.stat(proj);
         const voc = getLanguageJSON().intro.recovery;
         const userResponse = await window.alertify

@@ -30,6 +30,7 @@ export interface IRoomEditorRiotTag extends IRiotTag {
     gridOn: boolean;
     freePlacementMode: boolean;
     controlMode: boolean;
+    spacebarMode: boolean;
     currentTool: tool;
     currentTemplate: ITemplate | -1;
     setTool(tool: tool): () => void;

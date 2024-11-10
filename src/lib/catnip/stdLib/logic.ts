@@ -14,7 +14,8 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
     pieces: [{
         type: 'argument',
         key: 'condition',
-        typeHint: 'boolean'
+        typeHint: 'boolean',
+        required: true
     }, {
         placeholder: 'doNothing',
         type: 'blocks',
@@ -38,7 +39,8 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
     pieces: [{
         type: 'argument',
         key: 'condition',
-        typeHint: 'boolean'
+        typeHint: 'boolean',
+        required: true
     }, {
         placeholder: 'doNothing',
         type: 'blocks',
@@ -72,7 +74,8 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
     pieces: [{
         type: 'argument',
         key: 'condition',
-        typeHint: 'boolean'
+        typeHint: 'boolean',
+        required: true
     }, {
         type: 'blocks',
         key: 'body'
@@ -95,7 +98,8 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
     pieces: [{
         type: 'argument',
         key: 'N',
-        typeHint: 'number'
+        typeHint: 'number',
+        required: true
     }, {
         type: 'label',
         name: 'times',
@@ -109,7 +113,8 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
     }, {
         type: 'argument',
         key: 'variableName',
-        typeHint: 'wildcard'
+        typeHint: 'wildcard',
+        required: true
     }, {
         type: 'blocks',
         key: 'body'
@@ -127,7 +132,8 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
     pieces: [{
         type: 'argument',
         key: 'variableName',
-        typeHint: 'wildcard'
+        typeHint: 'wildcard',
+        required: true
     }, {
         type: 'label',
         name: 'of array',
@@ -135,7 +141,8 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
     }, {
         type: 'argument',
         key: 'array',
-        typeHint: 'wildcard'
+        typeHint: 'wildcard',
+        required: true
     }, {
         type: 'blocks',
         key: 'body'
@@ -162,7 +169,8 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
     pieces: [{
         type: 'argument',
         key: 'a',
-        typeHint: 'boolean'
+        typeHint: 'boolean',
+        required: true
     }, {
         type: 'label',
         name: 'and',
@@ -170,7 +178,8 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
     }, {
         type: 'argument',
         key: 'b',
-        typeHint: 'boolean'
+        typeHint: 'boolean',
+        required: true
     }],
     jsTemplate: (args) => `(${args.a} && ${args.b})`
 }, {
@@ -186,7 +195,8 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
     pieces: [{
         type: 'argument',
         key: 'a',
-        typeHint: 'boolean'
+        typeHint: 'boolean',
+        required: true
     }, {
         type: 'label',
         name: 'and',
@@ -194,7 +204,8 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
     }, {
         type: 'argument',
         key: 'b',
-        typeHint: 'boolean'
+        typeHint: 'boolean',
+        required: true
     }, {
         type: 'label',
         name: 'and',
@@ -202,7 +213,8 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
     }, {
         type: 'argument',
         key: 'c',
-        typeHint: 'boolean'
+        typeHint: 'boolean',
+        required: true
     }],
     jsTemplate: (args) => `(${args.a} && ${args.b} && ${args.c})`
 }, {
@@ -218,7 +230,8 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
     pieces: [{
         type: 'argument',
         key: 'a',
-        typeHint: 'boolean'
+        typeHint: 'boolean',
+        required: true
     }, {
         type: 'label',
         name: 'or',
@@ -226,7 +239,8 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
     }, {
         type: 'argument',
         key: 'b',
-        typeHint: 'boolean'
+        typeHint: 'boolean',
+        required: true
     }],
     jsTemplate: (args) => `(${args.a} || ${args.b})`
 }, {
@@ -242,7 +256,8 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
     pieces: [{
         type: 'argument',
         key: 'a',
-        typeHint: 'boolean'
+        typeHint: 'boolean',
+        required: true
     }, {
         type: 'label',
         name: 'or',
@@ -250,7 +265,8 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
     }, {
         type: 'argument',
         key: 'b',
-        typeHint: 'boolean'
+        typeHint: 'boolean',
+        required: true
     }, {
         type: 'label',
         name: 'or',
@@ -258,7 +274,8 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
     }, {
         type: 'argument',
         key: 'c',
-        typeHint: 'boolean'
+        typeHint: 'boolean',
+        required: true
     }],
     jsTemplate: (args) => `(${args.a} || ${args.b} || ${args.c})`
 }, {
@@ -275,7 +292,8 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
     pieces: [{
         type: 'argument',
         key: 'a',
-        typeHint: 'boolean'
+        typeHint: 'boolean',
+        required: true
     }],
     jsTemplate: (args) => `!${args.a}`
 }, {

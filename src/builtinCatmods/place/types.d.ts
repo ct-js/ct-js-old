@@ -104,6 +104,8 @@ declare namespace place {
      *
      * @param {Copy} me The object to check collisions on
      * @param {String} [cgroup] The collision group to check against
+     * @catnipName place is free for copy
+     * @catnipName_Ru место для копии свободно
      */
     function free(me: Copy, cgroup?: string): boolean;
 
@@ -131,6 +133,8 @@ declare namespace place {
      * @param {String} [cgroup] The collision group to check against
      * @returns {Copy|PIXI.Sprite|false} The collided copy, or `false`
      * if there were no collisions.
+     * @catnipName occupying object for
+     * @catnipName_Ru занимает место для
      */
     function occupied(me: Copy, cgroup?: string): Copy | false;
     /**
@@ -168,6 +172,8 @@ declare namespace place {
      * @param {String} [template] The name of the template to check agains
      * @catnipAsset template:template
      * @returns {Copy|Array<Copy>} The collided copy or `false`, if there was no collision.
+     * @catnipName occupied by a template
+     * @catnipName_Ru занято шаблоном
      */
     function meet(me: Copy, template: string): Copy | false;
     /**
@@ -275,9 +281,7 @@ declare namespace place {
      * returns `false`. If a copy met an obstacle as another copy, returns this copy.
      * If there was a tile, returns `true`.
      *
-     * @catnipSaveReturn
-     * @catnipName Move a copy along a line
-     * @catnipName_Ru Передвинуть копию вдоль линии
+     * @catnipIgnore
      */
     function moveAlong(
         me: Copy, direction: number, maxLength: number, cgroup?: string, stepSize?: number
@@ -299,9 +303,7 @@ declare namespace place {
      * @returns {false|ISeparateMovementResult} `false` if it reached its target,
      * an object with each axis specified otherwise.
      *
-     * @catnipSaveReturn
-     * @catnipName Move a copy by distance
-     * @catnipName_Ru Передвинуть копию на расстояние
+     * @catnipIgnore
      */
     function moveByAxes(me: Copy, dx: number, dy: number, cgroup?: string, stepSize?: number):
         false | ISeparateMovementResult;

@@ -13,5 +13,5 @@ export default async (param: png2IconsOptions): Promise<void> => {
         0,
         true
     )!;
-    await Bun.write(param.icoPath, icoBuffer);
+    await Bun.write(param.icoPath, icoBuffer.buffer);
 };

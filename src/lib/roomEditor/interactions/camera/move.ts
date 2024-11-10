@@ -16,9 +16,10 @@ interface IMoveCameraAffixedData {
 const moveCameraOnWheelPress: IRoomEditorInteraction<IMoveCameraAffixedData> = {
     ifListener: 'pointerdown',
     if(e: PIXI.FederatedPointerEvent) {
-        // Checks for a pressed mouse wheel
+        // Checks for a pressed mouse wheel, or Alt+Shift dragging, or Spacebar
         return e.button === 1 ||
-            (e.altKey && e.shiftKey);
+            (e.altKey && e.shiftKey) ||
+            this.riotEditor.spacebarMode;
     },
     listeners: {
         pointerdown(e: PIXI.FederatedPointerEvent, roomTag, affixedData) {

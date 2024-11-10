@@ -1,7 +1,7 @@
 import fs from '../../neutralino-fs-extra';
 import path from 'path';
 import {getDirectories} from '../../platformUtils';
-import {zip} from 'src/lib/bunchat';
+import {run} from 'src/lib/buntralino-client';
 import {exportCtProject} from '..';
 
 /**
@@ -22,7 +22,7 @@ export const exportForWeb = async (): Promise<string> => {
         production: true
     });
 
-    await zip({
+    await run('zip', {
         dir: exports,
         out: exportFile
     });

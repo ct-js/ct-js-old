@@ -104,10 +104,12 @@ export const create = async (url: string, options = {} as WindowOptions): Promis
         ...args
     ]);
     proc.exited.then(() => {
+        console.log('Neutralino process exited with code', proc.exitCode);
         dropConnection(name);
     });
-    for await (const chunk of proc.stdout) {
+    for await (const chunk of proc.readable) {
         const line = chunk.toString('utf8').trim();
+        console.log('received', line, chunk);
         if (!line.startsWith('⚛️')) {
             continue;
         }

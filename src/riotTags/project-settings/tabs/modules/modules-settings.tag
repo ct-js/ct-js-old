@@ -81,7 +81,7 @@ modules-settings.aPanel.aView
         };
         this.refreshModules();
 
-        const {unzip} = require('src/lib/bunchat');
+        const {run} = require('src/lib/buntralino-client');
         this.importModules = async e => {
             const files = await Neutralino.os.showOpenDialog(void 0, {
                 filters: [{
@@ -99,7 +99,10 @@ modules-settings.aPanel.aView
 
             for (const file of files) {
                 const destPath = path.join(moduleDir, path.basename(file, path.extname(file)));
-                unpackPromises.push(unzip(file, destPath));
+                unpackPromises.push(run('unzip', {
+                    inPath: file,
+                    outPath: destPath
+                }));
             }
             await Promise.all(unpackPromises);
             this.refreshModules();

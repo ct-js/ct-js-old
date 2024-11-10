@@ -70,6 +70,7 @@ project-selector
                             placeholder="{voc.newProject.input}"
                             pattern="[a-zA-Z_0-9]\\{1,\\}"
                             oninput="{setProjectName}"
+                            value="{projectName}"
                             width="20"
                             maxlength="64"
                         )
@@ -219,7 +220,7 @@ project-selector
 
         this.isMac = require('src/lib/platformUtils').isMac;
         const {write} = require('src/lib/neutralino-storage');
-        const {bun} = require('src/lib/bunchat');
+        const {run} = require('src/lib/buntralino-client');
         const {openProject} = require('src/lib/resources/projects');
         this.ctjsVersion = window.ctjsVersion;
         this.requirePath = path;
@@ -428,11 +429,13 @@ project-selector
         };
         this.setProjectName = e => {
             this.projectName = e.target.value.trim();
+            this.projectName = this.projectName.replace(/[^a-zA-Z_0-9]/g, '');
+            e.target.value = this.projectName;
         };
         /** A button listener for triggering a project creation process. */
         this.createProject = () => {
             const codename = this.projectName;
-            if (codename.length === 0) {
+            if (codename.length === 0 || /[^a-zA-Z_0-9]/.test(codename)) {
                 alertify.error(this.voc.newProject.nameError);
                 return;
             }
@@ -504,7 +507,7 @@ project-selector
                 } else if (isLinux) {
                     channel = 'linux64';
                 }
-                bun('fetchJson', `https://itch.io/api/1/x/wharf/latest?target=comigo/ct&channel_name=${channel}`)
+                run('fetchJson', `https://itch.io/api/1/x/wharf/latest?target=comigo/ct&channel_name=${channel}`)
                 .then(json => {
                     if (!json.errors) {
                         if (this.ctjsVersion !== json.latest) {

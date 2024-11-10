@@ -49,9 +49,8 @@ const fetchPatrons = async () => {
 const defaultTask = gulp.series([
     updateGitSubmodules,
     gulp.parallel([
-        npmInstall('./'),
-        npmInstall('./docs'),
-        bunInstall('./bgServices')
+        bunInstall('./'),
+        npmInstall('./docs')
     ]),
     cleanup,
     gulp.parallel([

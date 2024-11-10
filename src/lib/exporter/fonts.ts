@@ -1,7 +1,7 @@
 import fs from '../neutralino-fs-extra';
 
 import {getPathToTtf} from '../resources/typefaces';
-import {ttf2Woff} from '../bunchat';
+import {run} from '../buntralino-client';
 
 export const stringifyFont = (typeface: ITypeface, font: IFont): string => `
 @font-face {
@@ -33,7 +33,10 @@ export const bundleFonts = async function (
                 // Run the copying task early so they run in parallel
                 writePromises.push(fs.copy(getPathToTtf(font, true), writeDir + '/fonts/' + font.uid + '.ttf'));
                 try {
-                    await ttf2Woff(getPathToTtf(font, true), writeDir + '/fonts/' + font.uid + '.woff');
+                    await run('ttf2Woff', {
+                        in: getPathToTtf(font, true),
+                        out: writeDir + '/fonts/' + font.uid + '.woff'
+                    });
                 } catch (e) {
                     window.alertify.error(`Whoah! A buggy ttf file in the typeface ${typeface.name} ${font.weight} ${font.italic ? 'italic' : 'normal'}. You should either fix it or find a new one.`);
                     throw e;

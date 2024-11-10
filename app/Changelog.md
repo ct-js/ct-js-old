@@ -1,3 +1,76 @@
+## v5.2.1
+
+*Mon Nov 04 2024*
+
+### ⚡️ General Improvements
+
+* Catnip: Add mutators to timer blocks
+* Catnip: Add mutators for "action is down/pressed/released" blocks
+* Ct.js now checks whether recovery file actually differs from the regular project file
+* Room editor: you can now navigate around with Spacebar + Left mouse button (Closes #526)
+* :globe_with_meridians: Catnip: Improve Russian translations for ct.place
+* :globe_with_meridians: Catnip: Translate Pointer catmod to Russian and add more human-readable English names
+* :globe_with_meridians: Catnip: Translate the Random catmod's blocks to Russian
+
+### 🐛 Bug Fixes
+
+* Catnip: Add missing translation keys to Math operators
+* Catnip: Fix catnip blocks ignoring translations when there was a translated name without a translated label
+* Catnip: Fix inability to compile Script assets with Catnip code
+* Catnip: Properly mark the required arguments in the Logic category
+* Fields with invalid values should be outlined red
+* Fix ct.js saving projects' scripts with CRLF sequence instead of LF, which caused them to be one-lined in the .ict file, making merging changes harder for Git users. You can fix the existing scripts by cutting and pasting their contents back.
+* Fix minor styling issues on the homepage
+* Fix `random.dice` trying to convert string values to floats (Closes #544)
+* Make sure there are no special characters in the project name when creating one (Closes #543)
+
+### 📝 Docs
+
+* :bug: Fix brainless translation with room.append in Russian version of the JettyCat tutorial (Closes #141)
+
+## v5.2.0
+
+*Sun Oct 13 2024*
+
+### ✨ New Features
+
+* Add methods `u.distance`, `u.direction` (For Catnip, these can be found in Utilities category)
+* Object list panel for room editor's select mode, plus hover effect on copies and tiles
+
+### ⚡️ General Improvements
+
+* Add a menu in the app's settings to change app's UI font to Open Dyslexic or Comic Relief
+* Catnip: Add "set visibility" block
+* Catnip: improve block names for the Place catmod
+* Create missing properties and variables when copying Catnip blocks from one asset to another (and in other similar cases)
+* Improve how backgrounds and scrolling textures wrap themselves. Closes #535
+* Limit the amount of names the confirmation dialog shows when deleting several assets in the asset-browser tag.
+* :globe_with_meridians: Update Chinese Simplified translation (#534 and #536 by @emaoshushu)
+* :globe_with_meridians: Update Brazilian Portuguese translation (made by Henrique aka hlbarone on Discord)
+
+### 🐛 Bug Fixes
+
+* Catnip: Fix walkOverScript ignoring values in commands' arguments
+* Catnip: Hide templates.killRecursive block as it is an internal API
+* Fix an extra copy/tile appearing while using a rectangular fill in room editor
+* Fix not being able to copy multiple blocks in catnip
+* Fix overflowing content exceeding window boundaries in alertify modals. Closes #537
+* Fix repeated import of same-named images (or the same image) leading to textures with identical names, which broke exports
+* Fix rooms' tile editor not accepting 0 as tile layer depth
+* Fix sprited counters not rendering in room editor
+* Fix tabs with room editor not opening again if this room editor has an event editor open
+* Fix values in room editor's entities properties panel not updating when selecting new copies or tiles
+* Fix wrong initial values for rooms' camera restriction boundaries
+
+### 🌐 Website
+
+* :zap: New layout for engine's features
+* :bug: Fix issues with package icon and rounded corners on main page's grid layour
+* :fire: Remove old translation keys for the homepage
+* :zap: :globe_with_meridians: Update wording in the homepage's introductory text for Russian locale
+* :zap: Display games from static APIs in the homepage
+* :zap: Improve illustration position on various screens
+
 ## v5.1.0
 
 *Sat Jul 20 2024*

@@ -158,15 +158,11 @@ const compileRiot = () =>
     .pipe(gulp.dest('./temp/'));
 
 const concatScripts = () =>
-    streamQueue(
-        {
-            objectMode: true
-        },
-        // PIXI.js is used as window.PIXI
-        gulp.src('./src/js/exposeGlobalNodeModules.js'),
-        gulp.src('./temp/riotTags.js'),
-        gulp.src(['./src/js/**/*.js', '!./src/js/exposeGlobalNodeModules.js'])
-    )
+    gulp.src([
+        './src/js/exposeGlobalNodeModules.js',
+        './temp/riotTags.js',
+        './src/js/**/*.js'
+    ])
     .pipe(sourcemaps.init({
         largeFile: true
     }))
@@ -315,11 +311,11 @@ export const fetchNeutralino = async () => {
     })`neu update`;
     await $({
         preferLocal: true,
-        cwd: './bgServices/lib/packForDesktop/'
+        cwd: './src/bun/lib/packForDesktop/'
     })`neu update`;
     // Patch the .d.ts file until https://github.com/neutralinojs/neutralino.js/pull/117 is merged
     const ideClientPath = './neutralinoClient/neutralino.d.ts',
-          gameClientPath = './bgServices/lib/packForDesktop/game/neutralino.d.ts';
+          gameClientPath = './src/bun/lib/packForDesktop/game/neutralino.d.ts';
     const ideClient = await fs.readFile(ideClientPath, 'utf8');
     await fs.writeFile(ideClientPath, ideClient.replaceAll('export ', ''));
     const gameClient = await fs.readFile(gameClientPath, 'utf8');
@@ -378,7 +374,10 @@ const watch = () => {
 };
 
 const debugUrl = '127.0.0.1:6499/debug';
-const launchApp = () => $`bun run --inspect=${debugUrl} ./src/bun/index.js`;
+const launchApp = () => $({
+    stderr: 'pipe',
+    stdout: 'pipe'
+})`bun run ./src/bun/index.js`;
 
 const launchDevMode = done => {
     watch();
@@ -456,6 +455,7 @@ export const getBuiltPackagePath = (pf) => path.join('./build', `ctjs - v${neutr
 // -------------------------------------------------- //
 
 import {bakeDocs} from './devSetup.gulpfile.mjs';
+import { stderr } from 'process';
 
 export const patronsCache = async () => {
     const file = await fetch('https://ctjs.rocks/staticApis/patrons.json').then(res => res.text());
@@ -520,7 +520,7 @@ const templates = () => Promise.all(platforms.map(async pf => {
 
 export const wipeBuilds = () => fs.remove('./build');
 
-export const buildBun = async () => {
+export const buildBun = async () => { // TODO: remake
     const $$ = $({
         cwd: './bgServices'
     });
@@ -592,6 +592,7 @@ export const dumpPfx = () => {
     );
 };
 
+// TODO: remake. again.
 export const patchWindowsExecutables = async () => {
     const exePatchNeutralino = {
         icon: [`IDR_MAINFRAME,./buildAssets/${nightly ? 'nightly' : 'icon'}.ico`],
@@ -648,7 +649,7 @@ export const patchWindowsExecutables = async () => {
     }));
 };
 
-export const appifyMacBuilds = async () => {
+export const appifyMacBuilds = async () => { // TODO: remake
     await Promise.all(platforms.map(async (pf) => {
         if (pf.os !== 'macos') {
             return;
@@ -695,7 +696,7 @@ export const ensureCorrectPermissions = async () => {
         // Fix permissions for the main executable
         await Promise.all([
             fs.chmod(path.join(outputDir, 'ctjs'), '755'),
-            fs.chmod(path.join(outputDir, 'bgServices', 'ctjsbg'), '755')
+            fs.chmod(path.join(outputDir, 'bgServices', 'ctjsbg'), '755') // TODO: remake
         ]);
     }));
 };

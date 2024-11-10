@@ -18,7 +18,7 @@ const readyPromise = new Promise<void>((resolve, reject) => {
             }
             const [, id] = match.split('=');
             const neuToken = NL_TOKEN || sessionStorage.NL_TOKEN;
-            Neutralino.app.writeProcessOutput(`⚛️;id=${id};port=${NL_PORT};token=${neuToken};⚛️`);
+            Neutralino.app.writeProcessOutput(`⚛️;id=${id};port=${NL_PORT};token=${neuToken};⚛️\n`);
 
             const listener = (payload: {
                 detail: {
@@ -34,15 +34,18 @@ const readyPromise = new Promise<void>((resolve, reject) => {
                 bunPort = payload.detail.port;
                 bunWs = new WebSocket(`ws://localhost:${bunPort}`);
                 readyResolve();
+                // eslint-disable-next-line no-console
+                console.log('⚛️🥟 Buntralino connected');
             };
             Neutralino.events.on('buntralinoRegisterParent', listener);
         } catch (error) {
             readyReject(error);
+            console.error('⚛️🥟 Buntralino failed with', error);
         }
     });
 })();
 
-export const run = async (methodName: string) => {
+export const run = async (methodName: string, payload: unknown): Promise<unknown> => {
     await readyPromise;
     const awaitedResponseId = getUid();
     bunWs.send(JSON.stringify({
@@ -50,7 +53,7 @@ export const run = async (methodName: string) => {
         command: 'run',
         method: methodName,
         id: awaitedResponseId,
-        payload: {}
+        payload
     }));
     return new Promise<unknown>((resolve, reject) => {
         const listener = (event: CustomEvent<{

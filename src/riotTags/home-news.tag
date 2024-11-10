@@ -57,7 +57,7 @@ home-news
 
     script.
         const {write} = require('src/lib/neutralino-storage');
-        const {bun} = require('src/lib/bunchat');
+        const {run} = require('src/lib/buntralino-client');
         this.namespace = 'intro';
         this.mixin(require('src/lib/riotMixins/voc').default);
 
@@ -82,7 +82,7 @@ home-news
         }
         if (needsHomepageFetch) {
             setTimeout(() => {
-                bun('fetchJson', 'https://ctjs.rocks/staticApis/ctHome.json')
+                run('fetchJson', 'https://ctjs.rocks/staticApis/ctHome.json')
                 .then(json => {
                     if (!json.errors) {
                         write('lastHomepageFetch', new Date());

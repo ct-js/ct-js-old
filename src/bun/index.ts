@@ -31,6 +31,7 @@ const functionMap: Record<string, (payload: any) => Promise<any>> = {
 
 buntralino.registerMethodMap(functionMap);
 
+console.write('Hello!1');
 await buntralino.create('/', {
     name: 'ide'
 });

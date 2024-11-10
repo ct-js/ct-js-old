@@ -8,10 +8,12 @@ export const dropScriptModel = (script: Script) => {
 };
 /** This method is to be used when loading a project or creating a new script */
 export const addScriptModel = (script: Script) => {
-    scriptModels.set(script, monaco.editor.createModel(
+    const model = monaco.editor.createModel(
         script.code,
         'typescript'
-    ));
+    );
+    model.setEOL(monaco.editor.EndOfLineSequence.LF);
+    scriptModels.set(script, model);
 };
 /** Resets the monaco file models and loads in all the script */
 export const loadScriptModels = (project: IProject) => {

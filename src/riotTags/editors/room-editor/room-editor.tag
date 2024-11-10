@@ -218,6 +218,9 @@ room-editor.aPanel.aView(data-hotkey-scope="{asset.uid}")
                 e.preventDefault();
             } else if (e.key === 'Shift') {
                 this.controlMode = false;
+            } else if (e.key === ' ') {
+                this.spacebarMode = true;
+                e.preventDefault();
             }
         };
         const modifiersUpListener = e => {
@@ -232,6 +235,9 @@ room-editor.aPanel.aView(data-hotkey-scope="{asset.uid}")
                 e.preventDefault();
             } else if (e.key === 'Control' || e.key.Meta) {
                 this.controlMode = false;
+                e.preventDefault();
+            } else if (e.key === ' ') {
+                this.spacebarMode = false;
                 e.preventDefault();
             }
         };

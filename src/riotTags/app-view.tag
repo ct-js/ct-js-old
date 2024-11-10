@@ -127,7 +127,7 @@ app-view.flexcol
         const {saveProject, getProjectCodename} = require('src/lib/resources/projects');
         const resources = require('src/lib/resources');
         const {isDev} = require('src/lib/platformUtils');
-        const {serve, stopServer, getNetInterfaces} = require('src/lib/bunchat');
+        const {run} = require('src/lib/buntralino-client');
         const {getDirectories} = require('src/lib/platformUtils');
         const {init, createWindow, sendMessage, awaitConnection, shareConnections, getPosition, getSize, setPosition, show, focus, broadcastTo} = require('src/lib/multiwindow');
         const {exportCtProject} = require('src/lib/exporter');
@@ -455,11 +455,14 @@ app-view.flexcol
         let debugServer;
         this.on('mount', async () => {
             const {exports} = await getDirectories();
-            debugServer = await serve(exports, 40469);
+            debugServer = await run('serve', {
+                dir: exports,
+                port: 40469
+            });
         });
         this.on('unmount', () => {
             if (debugServer) {
-                stopServer(debugServer.port);
+                run('stopServer', debugServer.port);
             }
         });
 
@@ -548,7 +551,7 @@ app-view.flexcol
         };
         const netInterfacesListener = async () => {
             const [interfaces] = await Promise.all([
-                getNetInterfaces(),
+                run('getNetInterfaces'),
                 awaitConnection('qrCodes')
             ]);
             broadcastTo('qrCodes', 'netConnections', interfaces);

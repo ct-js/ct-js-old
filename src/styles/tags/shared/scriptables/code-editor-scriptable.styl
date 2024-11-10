@@ -15,3 +15,5 @@ code-editor-scriptable, script-editor
         height 100%
     &.tall
         overflow hidden
+    & > [ref="codebox"]
+        overflow visible // fixes scrollbars popping up in monaco when using a non-integer zoom value

@@ -86,7 +86,7 @@ const fxNamesToClasses = {} as {
     [T in fxName]: typeof pixiSoundFilters[T]
 };
 for (const fxName of fxNames) {
-    fxNamesToClasses[fxName] = PIXI.sound.filters[fxName];
+    fxNamesToClasses[fxName] = PIXI.sound.filters[fxName] as any;
 }
 
 /**

@@ -48,7 +48,7 @@ const makeMathUnary = (operator: string): IBlockComputedDeclaration => ({
     type: 'computed',
     typeHint: 'number',
     hideIcon: true,
-    i18nKey: operator,
+    i18nKey: 'math ' + operator,
     jsTemplate: (vals) => `Math.${operator}(${vals.a})`,
     lib: 'core.math',
     pieces: [{
@@ -66,7 +66,7 @@ const makeMathBinary = (operator: string): IBlockComputedDeclaration => ({
     type: 'computed',
     typeHint: 'number',
     hideIcon: true,
-    i18nKey: operator,
+    i18nKey: 'math ' + operator,
     jsTemplate: (vals) => `Math.${operator}(${vals.a}, ${vals.b})`,
     lib: 'core.math',
     pieces: [{

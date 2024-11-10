@@ -27,7 +27,14 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
         typeHint: 'string',
         key: 'action'
     }],
-    jsTemplate: (values) => `actions[${values.action}].pressed`
+    jsTemplate: (values) => `actions[${values.action}].pressed`,
+    mutators: [{
+        code: 'action down',
+        lib: 'core.actions'
+    }, {
+        code: 'action released',
+        lib: 'core.actions'
+    }]
 }, {
     name: 'is action down',
     type: 'computed',
@@ -42,7 +49,14 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
         typeHint: 'string',
         key: 'action'
     }],
-    jsTemplate: (values) => `actions[${values.action}].down`
+    jsTemplate: (values) => `actions[${values.action}].down`,
+    mutators: [{
+        code: 'action pressed',
+        lib: 'core.actions'
+    }, {
+        code: 'action released',
+        lib: 'core.actions'
+    }]
 }, {
     name: 'is action released',
     type: 'computed',
@@ -57,7 +71,14 @@ const blocks: (IBlockCommandDeclaration | IBlockComputedDeclaration)[] = [{
         typeHint: 'string',
         key: 'action'
     }],
-    jsTemplate: (values) => `actions[${values.action}].released`
+    jsTemplate: (values) => `actions[${values.action}].released`,
+    mutators: [{
+        code: 'action down',
+        lib: 'core.actions'
+    }, {
+        code: 'action pressed',
+        lib: 'core.actions'
+    }]
 }];
 
 export default blocks;

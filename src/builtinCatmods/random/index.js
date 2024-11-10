@@ -3,20 +3,19 @@
 const random = function random(x) {
     return Math.random() * x;
 };
-function processRandomInput(input) {
-    if (input.length === 1 && typeof input[0] === "string") {
-        return input[0].split(",");
+const processRandomInput = function (input) {
+    if (input.length === 1 && typeof input[0] === 'string') {
+        return input[0].split(',');
     }
     return input;
-}
+};
 Object.assign(random, {
     dice(...variants) {
         const dices = processRandomInput(variants);
         if (Array.isArray(dices) && dices.length > 0) {
-            const result = dices[Math.floor(Math.random() * dices.length)];
-            const parsedResult = parseFloat(result);
-            return isNaN(parsedResult) ? result : parsedResult;
+            return dices[Math.floor(Math.random() * dices.length)];
         }
+        return null;
     },
     histogram(...histogram) {
         const coeffs = [...processRandomInput(histogram)];
@@ -50,7 +49,10 @@ Object.assign(random, {
         return Math.random() * 360;
     },
     coord() {
-        return [Math.floor(Math.random() * camera.width), Math.floor(Math.random() * camera.height)];
+        return [
+            Math.floor(Math.random() * camera.width),
+            Math.floor(Math.random() * camera.height)
+        ];
     },
     chance(x, y) {
         if (y) {

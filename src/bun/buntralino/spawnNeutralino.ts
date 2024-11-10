@@ -17,7 +17,7 @@ const neutralinoBinaries = [{
 }, {
     platform: 'win32',
     arch: 'x64',
-    neutralinoPostfix: 'win_x64'
+    neutralinoPostfix: 'win_x64.exe'
 }];
 export const spawnNeutralino = async (args: string[]) => {
     const config = {
@@ -38,6 +38,8 @@ export const spawnNeutralino = async (args: string[]) => {
     if (!match) {
         throw new Error(`Unsupported platform or architecture: ${process.platform} ${process.arch}`);
     }
+    // eslint-disable-next-line no-console
+    console.log('⚛️🥟 Running Neutralino in dev mode 🥟⚛️');
     // Use the downloaded binary created by `neu install`
     return Bun.spawn([
         `${process.cwd()}/bin/neutralino-${match.neutralinoPostfix}`,

@@ -29,7 +29,7 @@ import {getVariantPath} from '../resources/sounds/common';
 import {getLanguageJSON} from './../i18n';
 import {getDirectories} from './../platformUtils';
 
-import {minifyCss, minifyHtml} from '../bunchat';
+import {run} from '../buntralino-client';
 
 
 let currentProject: IProject;
@@ -426,7 +426,7 @@ const exportCtProject = async (
         accent: project.settings.branding.accent
     }, injections);
     if (!noMinify) {
-        css = await minifyCss(css);
+        css = await run('minifyCss', css) as string;
     }
 
     // Various JS protection measures
@@ -479,7 +479,7 @@ const exportCtProject = async (
         }
     );
     if (!noMinify) {
-        html = await minifyHtml(html);
+        html = await run('minifyHtml', html) as string;
     }
     await Promise.all([
         fs.writeFile(path.join(dirs.exports, '/index.html'), html, 'utf8'),

@@ -8,6 +8,7 @@ Returns a random float value between 0 and x, exclusive.
 
 ### `random.dice(dice1,dice2,...diceN)`
 Returns a random given argument.
+When given just one string value, the string will be split by `,` separator and a random item will be returned.
 
 ### `random.range(x1, x2)`
 Returns a random float value between `x1` and `x2`, exclusive.

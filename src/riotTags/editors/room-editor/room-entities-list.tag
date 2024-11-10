@@ -70,8 +70,23 @@ room-entities-list(onpointerout="{clearHover}")
                     const ind2 = array.indexOf(lastSelected),
                           from = Math.min(ind, ind2),
                           to = Math.max(ind, ind2);
-                    for (const rangeObj of array.slice(from, to)) {
-                        set.add(rangeObj);
+                    // Split code for faster selection when no search query is specified
+                    if (!this.searchQuery) {
+                        for (const rangeObj of array.slice(from, to)) {
+                            set.add(rangeObj);
+                        }
+                    } else if (tile) {
+                        for (const rangeObj of array.slice(from, to)) {
+                            if (getById('texture', rangeObj.tileTexture).name.toLowerCase().includes(this.searchQuery)) {
+                                set.add(rangeObj);
+                            }
+                        }
+                    } else if (copy) {
+                        for (const rangeObj of array.slice(from, to)) {
+                            if (rangeObj.cachedTemplate.name.toLowerCase().includes(this.searchQuery)) {
+                                set.add(rangeObj);
+                            }
+                        }
                     }
                 }
                 set.add(object);

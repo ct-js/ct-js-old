@@ -1,15 +1,22 @@
 home-news
     display block
+    h2
+        color white
+        if (themeDark)
+            color act
     .&-aNewsRow
         position relative
         align-items center
         gap 1rem
+        margin-bottom 1rem
         img
             flex 0 0 auto
             height 128px
         p
             margin 0.25rem 0 1rem
             line-height 1.5
+        h2
+            color acttext
     .&-aNewsBg
         position absolute
         top 0
@@ -23,6 +30,7 @@ home-news
         filter blur(5px)
         opacity 0.35
     .&-FeaturedGames, .&-LearningResources
+        margin-top 0.5rem
         .Cards
             grid-template-columns repeat(auto-fill, minmax(21em, 1fr))
             align-items start
