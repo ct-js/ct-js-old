@@ -869,11 +869,11 @@
     },
     "languageSelector": {
         "chooseLanguageHeader": "Choose your coding language",
-        "chooseLanguageExplanation": "This is the language you will write events with to describe your gameplay logic. Previously, all the projects used JavaScript+TypeScript. Note that you can only convert CoffeeScript or Catnip projects to JavaScript, but not the other way around, so choose carefully!",
-        "coffeeScriptDescription": "A good language for beginners with a simple syntax. Pick this language if you don't have prior experience with programming with code, or if you love Python.",
-        "pickCoffeeScript": "I choose CoffeeScript!",
+        "chooseLanguageExplanation": "This is the language you will write events with to describe your gameplay logic. Previously, all the projects used JavaScript+TypeScript. Note that you can only convert Civet or Catnip projects to JavaScript, but not the other way around, so choose carefully!",
+        "civetDescription": "A good language for beginners with a simple syntax that still has the powers of TypeScript. Pick this language if you don't have prior experience with programming with code, or if you love Python or CoffeeScript.",
+        "pickCivet": "I choose Civet!",
         "jsAndTs": "JavaScript (and TypeScript)",
-        "jsTsDescription": "The language of the web. Its syntax is more complex but it has in-editor error highlighting and code suggestions. Choose it if you worked with JS, C# or Java code before.",
+        "jsTsDescription": "The language of the web; JavaScript's syntax is close to C-like langugages, especially C#. When needed, add classes and strict typings with TypeScript syntax.",
         "pickJsTs": "I choose JavaScript!",
         "acceptAndSpecifyDirectory": "Accept and pick project folder",
         "catnip": "Catnip",
@@ -1361,7 +1361,7 @@
             "successZipProject": "Successfully zipped the project to {0}.",
             "zipProject": "Pack project to .zip",
             "convertToJs": "Convert project to JavaScript",
-            "confirmationConvertToJs": "This will automatically convert ALL the events in the project to JavaScript. This action is irreversible. (Though it will rollback if it finds an error in your scripts.) Are you sure you want to convert this CoffeeScript project to JavaScript?"
+            "confirmationConvertToJs": "This will automatically convert ALL the events in the project to JavaScript. This action is irreversible. (Though it will rollback if it finds an error in your scripts.) Are you sure you want to convert this Civet project to JavaScript?"
         },
         "meta": {
             "heading": "Meta",

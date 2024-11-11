@@ -175,7 +175,7 @@ const provideSoundNamesCS = function provideSoundNamesCS(
     };
 };
 
-// Suits both coffeescript and typescript
+// Suits both civet and typescript
 const provideActionNames = function provideActionNames(
     model: monaco.editor.ITextModel,
     position: monaco.Position
@@ -220,7 +220,7 @@ const providePSNamesCS = function providePSNamesCS(
     };
 };
 
-// Suits both coffeescript and typescript
+// Suits both civet and typescript
 const provideScriptNames = function provideScriptNames(
     model: monaco.editor.ITextModel,
     position: monaco.Position
@@ -240,7 +240,7 @@ export default () => {
         provideCompletionItems: provideTemplateNames,
         triggerCharacters: ['(', '[']
     });
-    monaco.languages.registerCompletionItemProvider('coffeescript', {
+    monaco.languages.registerCompletionItemProvider('civet', {
         provideCompletionItems: provideTemplateNamesCS,
         triggerCharacters: [' ', '(', '[']
     });
@@ -248,7 +248,7 @@ export default () => {
         provideCompletionItems: provideSoundNames,
         triggerCharacters: ['(']
     });
-    monaco.languages.registerCompletionItemProvider('coffeescript', {
+    monaco.languages.registerCompletionItemProvider('civet', {
         provideCompletionItems: provideSoundNamesCS,
         triggerCharacters: ['(', ' ']
     });
@@ -256,7 +256,7 @@ export default () => {
         provideCompletionItems: provideActionNames,
         triggerCharacters: ['.']
     });
-    monaco.languages.registerCompletionItemProvider('coffeescript', {
+    monaco.languages.registerCompletionItemProvider('civet', {
         provideCompletionItems: provideActionNames,
         triggerCharacters: ['.']
     });
@@ -264,7 +264,7 @@ export default () => {
         provideCompletionItems: provideRoomNames,
         triggerCharacters: ['(', '[']
     });
-    monaco.languages.registerCompletionItemProvider('coffeescript', {
+    monaco.languages.registerCompletionItemProvider('civet', {
         provideCompletionItems: provideRoomNamesCS,
         triggerCharacters: ['(', '[', ' ']
     });
@@ -272,7 +272,7 @@ export default () => {
         provideCompletionItems: providePSNames,
         triggerCharacters: ['(']
     });
-    monaco.languages.registerCompletionItemProvider('coffeescript', {
+    monaco.languages.registerCompletionItemProvider('civet', {
         provideCompletionItems: providePSNamesCS,
         triggerCharacters: ['(', ' ']
     });
@@ -280,7 +280,7 @@ export default () => {
         provideCompletionItems: provideScriptNames,
         triggerCharacters: ['.']
     });
-    monaco.languages.registerCompletionItemProvider('coffeescript', {
+    monaco.languages.registerCompletionItemProvider('civet', {
         provideCompletionItems: provideScriptNames,
         triggerCharacters: ['.']
     });

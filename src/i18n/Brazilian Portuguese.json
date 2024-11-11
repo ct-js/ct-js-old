@@ -809,9 +809,7 @@
     },
     "languageSelector": {
         "chooseLanguageHeader": "Escolha sua linguagem de programação",
-        "chooseLanguageExplanation": "Esta é a linguagem com a qual você escreverá eventos para descrever sua lógica de jogo. Anteriormente, todos os projetos usavam JavaScript+TypeScript. Observe que você só pode converter projetos CoffeeScript em JavaScript, mas não o contrário, então escolha com cuidado!",
-        "coffeeScriptDescription": "Uma boa linguagem para iniciantes com uma sintaxe simples. Escolha esta linguagem se você não tem experiência anterior em programação com código ou se adora Python.",
-        "pickCoffeeScript": "I prefiro CoffeeScript!",
+        "chooseLanguageExplanation": "Esta é a linguagem com a qual você escreverá eventos para descrever sua lógica de jogo. Anteriormente, todos os projetos usavam JavaScript+TypeScript. Observe que você só pode converter projetos Civet em JavaScript, mas não o contrário, então escolha com cuidado!",
         "jsAndTs": "JavaScript (and TypeScript)",
         "jsTsDescription": "A linguagem da web. Sua sintaxe é mais complexa, mas possui destaque de erros no editor e sugestões de código. Escolha-o se você já trabalhou com código JS, C# ou Java antes.",
         "pickJsTs": "Eu prefiro JavaScript!",
@@ -1299,7 +1297,7 @@
             "successZipProject": "Projeto zipado com sucesso para {0}.",
             "zipProject": "Compactar o projeto para .zip",
             "convertToJs": "Converter o projeto para Javascript",
-            "confirmationConvertToJs": "Isso converterá automaticamente TODOS os eventos do projeto para JavaScript. Esta ação é irreversível. (Embora ele seja revertido se encontrar um erro em seus scripts.) Tem certeza de que deseja converter este projeto CoffeeScript para JavaScript?"
+            "confirmationConvertToJs": "Isso converterá automaticamente TODOS os eventos do projeto para JavaScript. Esta ação é irreversível. (Embora ele seja revertido se encontrar um erro em seus scripts.) Tem certeza de que deseja converter este projeto Civet para JavaScript?"
         },
         "meta": {
             "heading": "Meta",

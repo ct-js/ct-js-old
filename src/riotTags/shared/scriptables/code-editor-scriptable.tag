@@ -15,16 +15,6 @@ code-editor-scriptable.relative.wide.tall.flexcol
         onrename="{renamePropVar}"
     )
     .relative.tall.wide(ref="codebox" if="{window.currentProject.language !== 'catnip'}")
-    .code-editor-scriptable-aProblemPanel.flexrow.nogrow(if="{problem}")
-        .nogrow
-            svg.feather.warning
-                use(xlink:href="#alert-circle")
-        pre.nm {problem.stack.slice(8)}
-        .nogrow
-            button.inline(onclick="{jumpToProblem}")
-                svg.feather
-                    use(xlink:href="#chevron-up")
-                | {voc.jumpToProblem}
     script.
         this.namespace = 'scriptables';
         this.mixin(require('src/lib/riotMixins/voc').default);
@@ -33,27 +23,6 @@ code-editor-scriptable.relative.wide.tall.flexcol
         const {baseClassToTS} = require('src/lib/resources/templates');
         this.language = window.currentProject.language || 'typescript';
         this.allEvents = eventsAPI.events;
-
-        const compileCoffeScript = require('coffeescript').CoffeeScript.compile;
-        const checkProblemsDebounced = window.debounce(() => {
-            if (!this.codeEditor || this.language !== 'coffeescript') {
-                return;
-            }
-            const oldProblem = this.problem;
-            try {
-                compileCoffeScript(this.codeEditor.getValue(), {
-                    bare: true,
-                    sourcemaps: false
-                });
-                this.problem = false;
-            } catch (err) {
-                this.problem = err;
-            }
-            if (oldProblem !== this.problem) {
-                this.update();
-                this.codeEditor.layout();
-            }
-        }, 750);
 
         const refreshLayout = () => {
             if (this.language === 'catnip') {
@@ -106,9 +75,12 @@ code-editor-scriptable.relative.wide.tall.flexcol
                     ctEntity = baseClassToTS[this.opts.asset.baseClass];
                 }
                 const fields = eventsAPI.getFieldsTypeScript(this.opts.asset);
-                const codePrefix = `function ctJsEvent(this: ${ctEntity}${fields}) {${varsDeclaration}`;
+                let codePrefix = `function ctJsEvent(this: ${ctEntity}${fields}) {${varsDeclaration}`;
                 if (this.language === 'typescript') {
                     this.codeEditor.setWrapperCode(codePrefix, '}');
+                } else if (this.language === 'civet') {
+                    codePrefix = `function ctJsEvent(this: ${ctEntity}${fields}) {\n    ${varsDeclaration}`;
+                    this.codeEditor.defineWrapperCode(codePrefix, '}');
                 }
                 this.codeEditor.getModel().ctCodePrefix = codePrefix;
             } else {
@@ -117,7 +89,7 @@ code-editor-scriptable.relative.wide.tall.flexcol
                 });
                 if (this.language === 'typescript') {
                     this.codeEditor.setValue(`// ${this.voc.createEventHint}`);
-                } else if (this.language === 'coffeescript') {
+                } else if (this.language === 'civet') {
                     this.codeEditor.setValue(`# ${this.voc.createEventHint}`);
                 } else {
                     // eslint-disable-next-line no-console
@@ -125,7 +97,6 @@ code-editor-scriptable.relative.wide.tall.flexcol
                     this.codeEditor.setValue(this.voc.createEventHint);
                 }
             }
-            checkProblemsDebounced();
         };
         const checkForTypedefChanges = assetId => {
             if (this.language === 'catnip') {
@@ -163,10 +134,8 @@ code-editor-scriptable.relative.wide.tall.flexcol
                     if (this.currentEvent) {
                         this.currentEvent.code = this.codeEditor.getPureValue();
                     }
-                    checkProblemsDebounced();
                 });
                 this.codeEditor.focus();
-                checkProblemsDebounced();
                 window.addEventListener('resize', refreshLayout);
             }, 0);
         });

@@ -1,10 +1,14 @@
 import * as monaco from 'monaco-editor';
+window.monaco = monaco;
+
 import completions from './completions';
 import helpers from './helpers';
 
+const coffeescriptTokenizer = require('src/lib/coffeescriptTokenizer.js').language;
+import {completionsProvider as civetCompletions} from 'src/lib/civetLanguageFeatures';
+
 export default () => {
     // @see https://github.com/microsoft/monaco-editor-samples/blob/master/nwjs-amd-v2/index.html
-    window.monaco = monaco;
     self.MonacoEnvironment = {
         getWorkerUrl(moduleId, label) {
             if (label === 'json') {
@@ -46,8 +50,6 @@ export default () => {
     // Extended typescript tokenizer
     const typescriptTokenizer = require('src/lib/typescriptTokenizer.js').language;
     // Extended coffeescript tokenizer & suggestions provider
-    const coffeescriptTokenizer = require('src/lib/coffeescriptTokenizer.js').language;
-    const {CompletionsProvider: CoffeeCompletions} = require('src/lib/coffeescriptSuggestionProvider');
     const {HoverProvider: TsHoverProvider} = require('src/lib/catniplessTsHoverProvider.js');
 
     const themeManager = require('src/lib/themes');
@@ -63,16 +65,15 @@ export default () => {
         value: '(:'
     });
     monaco.editor.create(document.createElement('textarea'), {
-        language: 'coffeescript',
+        language: 'civet',
         value: ':)'
     });
     setTimeout(() => {
         monaco.languages.setMonarchTokensProvider('typescript', typescriptTokenizer);
-        monaco.languages.setMonarchTokensProvider('coffeescript', coffeescriptTokenizer);
+        monaco.languages.setMonarchTokensProvider('civet', coffeescriptTokenizer);
         monaco.languages.typescript.getTypeScriptWorker()
         .then((client) => {
-            const coffeescriptSuggestions = new CoffeeCompletions(client);
-            monaco.languages.registerCompletionItemProvider('coffeescript', coffeescriptSuggestions);
+            monaco.languages.registerCompletionItemProvider('civet', civetCompletions);
 
             const hoverProvider = new TsHoverProvider(client);
             monaco.languages.registerHoverProvider('typescript', hoverProvider);

@@ -1,8 +1,8 @@
 import {ExporterError, highlightProblem} from './ExporterError';
-import {coffeeScriptOptions} from './scriptableProcessor';
+import {civetOptions} from './scriptableProcessor';
 import {compile as compileCatnip} from '../catnip/compiler';
 
-const compileCoffee = require('coffeescript').CoffeeScript.compile;
+import {compile as civet} from '@danielx/civet';
 const typeScript = require('sucrase').transform;
 
 export const stringifyScripts = (scripts: IScript[]): string =>
@@ -15,8 +15,8 @@ export const stringifyScripts = (scripts: IScript[]): string =>
                     transforms: ['typescript']
                 }));
                 break;
-            case 'coffeescript':
-                code = compileCoffee(script.code, coffeeScriptOptions);
+            case 'civet':
+                code = civet(script.code as string, civetOptions)
                 break;
             case 'catnip':
                 code = compileCatnip(script.code as BlockScript, {

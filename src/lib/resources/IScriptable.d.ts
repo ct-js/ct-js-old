@@ -6,7 +6,7 @@ interface IScriptableEvent {
     };
     /** Used for Catnip only */
     variables?: string[];
-    /** The user-written JS/CoffeeScript code */
+    /** The user-written JS/Civet/Catnip code */
     code: string | BlockScript;
     /** The codename of the current event, excluding the lib prefix, e.g. OnCreate */
     eventKey: string;

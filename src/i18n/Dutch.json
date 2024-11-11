@@ -720,7 +720,7 @@
             "zipProject": "Project inpakken naar .zip",
             "heading": "Project",
             "convertToJs": "Omzetten naar JavaScript",
-            "confirmationConvertToJs": "Dit zal automatisch ALLE events in het project omzetten naar JavaScript. Deze actie is onomkeerbaar. (Het zal wel alles terugzetten als het een fout in je scripts vindt.) Ben je zeker dat je dit project in CoffeeScript wil omzetten naar JavaScript?"
+            "confirmationConvertToJs": "Dit zal automatisch ALLE events in het project omzetten naar JavaScript. Deze actie is onomkeerbaar. (Het zal wel alles terugzetten als het een fout in je scripts vindt.) Ben je zeker dat je dit project in Civet wil omzetten naar JavaScript?"
         },
         "meta": {
             "license": "Licentie",
@@ -1219,9 +1219,7 @@
     },
     "languageSelector": {
         "chooseLanguageHeader": "Je programmeertaal kiezen.",
-        "chooseLanguageExplanation": "Dit is de taal waarmee je events zal schrijven om je gameplay logic te beschrijven. Eerder gebruikten alle projecten JavaScript+TypeScript. Merk op dat je enkel CoffeeScript projecten naar JavaScript kunt omzetten, maar niet omgekeerd, dus kies zorgvuldig!",
-        "coffeeScriptDescription": "Een goede taal voor beginners met een simpele syntax. Ga voor deze taal als je geen eerdere ervaring hebt met programmeren in code, of als je houdt van Python.",
-        "pickCoffeeScript": "Ik kies CoffeeScript!",
+        "chooseLanguageExplanation": "Dit is de taal waarmee je events zal schrijven om je gameplay logic te beschrijven. Eerder gebruikten alle projecten JavaScript+TypeScript. Merk op dat je enkel Civet projecten naar JavaScript kunt omzetten, maar niet omgekeerd, dus kies zorgvuldig!",
         "jsAndTs": "JavaScript (en Typescript)",
         "jsTsDescription": "De taal van het web. De syntax is complexer maar fouten worden in de editor aangeduid en er zijn codesuggesties. Kies hiervoor als je al met JS, C# of Java code hebt gewerkt.",
         "pickJsTs": "Ik kies JavaScript!",

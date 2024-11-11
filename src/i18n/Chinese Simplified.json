@@ -732,7 +732,7 @@
             "openProject": "打开项目…",
             "openExample": "打开示例项目…",
             "convertToJs": "将项目转换为JavaScript",
-            "confirmationConvertToJs": "这将自动将项目中的所有事件转换为JavaScript. 这种行为是不可逆转的. (但如果在脚本中发现错误, 它将回滚.) 您确定要将这个CoffeeScript项目转换为JavaScript吗?"
+            "confirmationConvertToJs": "这将自动将项目中的所有事件转换为JavaScript. 这种行为是不可逆转的. (但如果在脚本中发现错误, 它将回滚.) 您确定要将这个Civet项目转换为JavaScript吗?"
         },
         "meta": {
             "license": "许可证",
@@ -1354,9 +1354,7 @@
     },
     "languageSelector": {
         "chooseLanguageHeader": "选择你的编程语言",
-        "chooseLanguageExplanation": "这是你编写事件来描述游戏玩法逻辑的语言. 以前, 所有的项目都使用JavaScript+TypeScript. 请注意, 您只能将CoffeeScript项目转换为JavaScript, 反过来则不行, 因此请谨慎选择!",
-        "coffeeScriptDescription": "语法简单, 适合初学者的好语言. 如果您之前没有代码编程的经验, 或者您喜欢Python, 请选择这种语言.",
-        "pickCoffeeScript": "我选择CoffeeScript!",
+        "chooseLanguageExplanation": "这是你编写事件来描述游戏玩法逻辑的语言. 以前, 所有的项目都使用JavaScript+TypeScript. 请注意, 您只能将Civet项目转换为JavaScript, 反过来则不行, 因此请谨慎选择!",
         "jsAndTs": "JavaScript (以及 TypeScript)",
         "jsTsDescription": "web语言. 它的语法更复杂, 但它有编辑器内的错误高亮显示和代码建议. 如果你以前使用过JS, C#或Java代码, 请选择它.",
         "pickJsTs": "我选择JavaScript!",

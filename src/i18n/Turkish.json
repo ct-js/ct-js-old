@@ -795,7 +795,7 @@
             "successZipProject": "Proje başarılı bir şekilde şuraya ziplendi: {0}.",
             "zipProject": "Projeyi zip ile paketle",
             "convertToJs": "Projeyi Javascript'e dönüştür",
-            "confirmationConvertToJs": "Bu projendeki TÜM olayları Javascript'e dönüştürecek. Bu işlem (Kodunda bir hata bulunmadıysa) geri alınamaz. Bu CoffeeScript projesini Javascript'e dönüştürmek istediğine emin misin?"
+            "confirmationConvertToJs": "Bu projendeki TÜM olayları Javascript'e dönüştürecek. Bu işlem (Kodunda bir hata bulunmadıysa) geri alınamaz. Bu Civet projesini Javascript'e dönüştürmek istediğine emin misin?"
         },
         "meta": {
             "heading": "Meta",
@@ -1289,9 +1289,7 @@
     },
     "languageSelector": {
         "chooseLanguageHeader": "Yazılım dilini seç",
-        "chooseLanguageExplanation": "Bu oyun mantığını açıklamak için kullanacağın olayları yazacağın yazılım dili. Önceden, tüm projeler JavaScript+TypeScript kullanıyordu. Ayrıca sadece CoffeeScript projelerini JavaScript'e dönüştürebilirsin, fakat tam tersini yapamazsın. O yüzden, seçimini dikkatli yap!",
-        "coffeeScriptDescription": "Oyun geliştirmeye yeni başlayanlar için basit bir sözdizimi ile güzel bir dil. Eğer önceden yazılım ile ilgili bir tecrüben olmadıysa, ya da Python'u seviyorsan, bu dili seç.",
-        "pickCoffeeScript": "CoffeeScript'i seçiyorum!",
+        "chooseLanguageExplanation": "Bu oyun mantığını açıklamak için kullanacağın olayları yazacağın yazılım dili. Önceden, tüm projeler JavaScript+TypeScript kullanıyordu. Ayrıca sadece Civet projelerini JavaScript'e dönüştürebilirsin, fakat tam tersini yapamazsın. O yüzden, seçimini dikkatli yap!",
         "jsAndTs": "JavaScript",
         "jsTsDescription": "Web'in dili. Sözdizimi daha karmaşık ama kendi içinde editör-içi hata vurgulama ve kod önerileri var. Eğer önceden Java, C# ve JavaScript ile çalıştıysan JS'i seç.",
         "pickJsTs": "Javascript'i seçiyorum!",

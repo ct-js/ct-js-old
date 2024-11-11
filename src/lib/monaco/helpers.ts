@@ -2,9 +2,12 @@
 /* eslint-disable no-bitwise */
 /* eslint-disable no-underscore-dangle */
 
+import * as monaco from 'monaco-editor';
+
+import {CivetHoverProvider} from 'src/lib/civetLanguageFeatures';
+
 import {write} from '../neutralino-storage';
 import {extend} from '../objectUtils';
-import * as monaco from 'monaco-editor';
 
 type Writable<T> = T extends object ? { -readonly [K in keyof T]: Writable<T[K]> } : T;
 
@@ -29,7 +32,6 @@ export default () => {
             alwaysStrict: true
         });
 
-        // Disable the built-in hover provider
         const ts = monaco.languages.typescript;
         const globalsPromise = fetch('/data/typedefs/global.d.ts').then(text => text.text());
         const ctDtsPromise = fetch('/data/typedefs/ct.d.ts').then(text => text.text());
@@ -113,6 +115,11 @@ export default () => {
         ts.typescriptDefaults.addExtraLib(exposeCtJsModules, monaco.Uri.parse('file:///ctjsModules.d.ts').toString());
         ts.javascriptDefaults.addExtraLib(globalsDts, monaco.Uri.parse('file:///globals.d.ts').toString());
         ts.typescriptDefaults.addExtraLib(globalsDts, monaco.Uri.parse('file:///globals.d.ts').toString());
+
+        ts.getTypeScriptWorker()
+        .then(client => {
+            monaco.languages.registerHoverProvider('civet', new CivetHoverProvider(client));
+        });
     });
 
     /**
@@ -389,6 +396,7 @@ export default () => {
      * Can be 'plain_text', 'markdown', 'javascript', 'html' or 'css'
      * @returns {any} Editor instance
      */
+    // eslint-disable-next-line max-lines-per-function
     window.setupCodeEditor = (textarea: HTMLTextAreaElement | HTMLDivElement, options: {
         mode?: string;
         value?: string;
@@ -434,6 +442,17 @@ export default () => {
             }
             return val;
         };
+        /**
+         * This only writes the properties to later read them in other functions.
+         * It should not be used with setWrapperCode.
+         */
+        (codeEditor as any).defineWrapperCode = (start: string, end: string) => {
+            (codeEditor as any).wrapperStart = start;
+            (codeEditor as any).wrapperEnd = end;
+            const model = codeEditor.getModel()!;
+            (model as any).wrapperStart = start;
+            (model as any).wrapperEnd = end;
+        };
         (codeEditor as any).setWrapperCode = function setWrapperCode(start: string, end: string) {
             const oldVal = this.getValue();
             wrapStart = start;
@@ -469,6 +488,9 @@ export default () => {
             setUpWrappers(codeEditor);
         }
         extendHotkeys(codeEditor);
+        if (opts.language === 'civet') {
+            require('src/lib/civetLanguageFeatures').provideMarkers(codeEditor);
+        }
 
         return codeEditor;
     };

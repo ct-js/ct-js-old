@@ -13,8 +13,8 @@ import generateGUID from '../../generateGUID';
 const createNewTemplate = async (opts?: {name: string}): Promise<ITemplate> => {
     const template = getDefaultTemplate();
 
-    // Fix default OnStep event for coffeescript projects
-    if (window.currentProject.language === 'coffeescript') {
+    // Fix default OnStep event for civet projects
+    if (window.currentProject.language === 'civet') {
         template.events[0].code = '@move()';
     } else if (window.currentProject.language === 'catnip') {
         template.events[0].code = [{

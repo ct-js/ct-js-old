@@ -8,17 +8,17 @@ coding-language-selector
                     div
                         h2.nmt
                             svg.icon
-                                use(xlink:href="#coffeescript")
-                            span CoffeeScript
-                        p.nmt {voc.coffeeScriptDescription}
+                                use(xlink:href="#civet")
+                            span Civet
+                        p.nmt {voc.civetDescription}
                         pre
                             code.
                                 if health <= 0 and not invulnerable
                                     @kill = yes
-                        button(class="{active: selection === 'coffeescript'}" onclick="{selectLanguage('coffeescript')}")
+                        button(class="{active: selection === 'civet'}" onclick="{selectLanguage('civet')}")
                             svg.icon
-                                use(xlink:href="#coffeescript")
-                            span {voc.pickCoffeeScript}
+                                use(xlink:href="#civet")
+                            span {voc.pickCivet}
                     div
                         h2.nmt
                             svg.icon
@@ -48,16 +48,16 @@ coding-language-selector
                                 .catnip-block.computed.boolean
                                     .catnip-block.computed.wildcard.number.userdefined
                                         svg.feather
-                                            use(xlink:href="#archive")
+                                            use(xlink:href="#clock")
                                         span.catnip-block-aTextLabel health
                                     span.catnip-block-aTextLabel ≤
-                                    input.catnip-block-aConstantInput.number(readonly="readonly" value="0" style="width: 3ch;" type="text")
+                                    input.catnip-block-aConstantInput.number(readonly="readonly" value="0" style="width: 2ch;" type="text")
                                 span.catnip-block-aTextLabel {vocFull.catnip.blockLabels.and}
                                 .catnip-block.computed.boolean
                                     span.catnip-block-aTextLabel {vocFull.catnip.blockDisplayNames['NOT logic operator']}
                                     .catnip-block.computed.wildcard.boolean.userdefined
                                         svg.feather
-                                            use(xlink:href="#archive")
+                                            use(xlink:href="#clock")
                                         span.catnip-block-aTextLabel invulnerable
                             .catnip-block-Blocks(ref="blocksDrop")
                                 .catnip-block.command

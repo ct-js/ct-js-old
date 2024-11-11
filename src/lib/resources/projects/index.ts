@@ -166,8 +166,13 @@ const loadProject = async (projectData: IProject): Promise<void> => {
             window.riot.update();
         }, 0);
     } catch (err) {
-        window.alertify.alert(getLanguageJSON().intro.loadingProjectError + err);
-        throw err;
+        let report = getLanguageJSON().intro.loadingProjectError;
+        if (err.stack) {
+            report += '<br><pre><code>' + err.stack + '</code></pre>';
+        } else {
+            report += '<br>' + err;
+        }
+        window.alertify.alert(report);
     }
 };
 

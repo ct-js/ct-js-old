@@ -19,7 +19,6 @@ import zip from 'gulp-zip';
 import stylelint from 'stylelint';
 import eslint from 'gulp-eslint-new';
 
-import streamQueue from 'streamqueue';
 import replaceExt from 'gulp-ext-replace';
 import fs from 'fs-extra';
 
@@ -212,7 +211,12 @@ const bundleIdeScripts = () => esbuild({
         '.ttf': 'file'
     },
     alias: {
-        path: 'path-browserify'
+        path: 'path-browserify',
+        'node:path': 'path-browserify',
+        // Drop references to Node.js built-in modules in Civet code
+        'node:fs': 'src/lib/noopModule.ts',
+        'node:vm': 'src/lib/noopModule.ts',
+        'node:module': 'src/lib/noopModule.ts'
     }
 });
 

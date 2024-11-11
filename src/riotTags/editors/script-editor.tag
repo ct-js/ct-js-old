@@ -28,10 +28,10 @@ script-editor.aPanel.aView.flexfix
             span {voc.language}
             select(value="{asset.language}" onchange="{changeLanguage}")
                 option(value="typescript") TypeScript / JavaScript
-                option(value="coffeescript") CoffeeScript
+                option(value="civet") Civet
                 option(value="catnip") Catnip
         .aSpacer.noshrink
-        button(onclick="{convertCoffee}" if="{asset.language === 'coffeescript'}" disabled="{problem ? 'disabled' : ''}")
+        button(onclick="{convertCivet}" if="{asset.language === 'civet'}" disabled="{problem ? 'disabled' : ''}")
             svg.icon
                 use(xlink:href="#javascript")
             span {voc.convertToJavaScript}
@@ -74,26 +74,6 @@ script-editor.aPanel.aView.flexfix
             this.opts.ondone(this.asset);
         };
 
-        const compileCoffee = require('coffeescript').CoffeeScript.compile;
-        const checkProblemsDebounced = window.debounce(() => {
-            if (!this.codeEditor || this.asset.language !== 'coffeescript') {
-                return;
-            }
-            const oldProblem = this.problem;
-            try {
-                compileCoffee(this.codeEditor.getValue(), {
-                    bare: true,
-                    sourcemaps: false
-                });
-                this.problem = false;
-            } catch (err) {
-                this.problem = err;
-            }
-            if (oldProblem !== this.problem) {
-                this.update();
-                this.codeEditor.layout();
-            }
-        }, 750);
 
         let prevLanguage = this.asset.language;
         const updateEditor = () => {
@@ -104,12 +84,13 @@ script-editor.aPanel.aView.flexfix
                 monaco.editor.setModelLanguage(this.codeEditor.getModel(), this.asset.language);
                 prevLanguage = this.asset.language;
             }
-            const codePrefix = 'function ctJsScript(options: Record<string, any>) {';
+            let codePrefix = 'function ctJsScript(options: Record<string, any>) {';
             this.codeEditor.setValue(this.asset.code);
             if (this.asset.language === 'typescript') {
                 this.codeEditor.setWrapperCode(codePrefix, '}');
             } else {
-                this.codeEditor.setWrapperCode(' ', ' ');
+                codePrefix = 'function ctJsScript(options: Record<string, any>) {';
+                this.codeEditor.defineWrapperCode(codePrefix, '}');
             }
             this.codeEditor.getModel().ctCodePrefix = codePrefix;
         };
@@ -129,10 +110,8 @@ script-editor.aPanel.aView.flexfix
                 if (this.asset) {
                     this.asset.code = this.codeEditor.getPureValue();
                 }
-                checkProblemsDebounced();
             });
             this.codeEditor.focus();
-            checkProblemsDebounced();
         };
 
         this.changeLanguage = e => {
@@ -217,9 +196,10 @@ script-editor.aPanel.aView.flexfix
             this.codeEditor.focus();
         };
 
-        this.convertCoffee = () => {
+        const civet = require('@danielx/civet').compile;
+        this.convertCivet = () => {
             try {
-                const val = compileCoffee(this.codeEditor.getValue(), {
+                const val = civet(this.codeEditor.getValue(), {
                     bare: true,
                     sourcemaps: false
                 });

@@ -27,6 +27,7 @@
     "@ctjs/png2icons": "^3.0.1",
     "@neutralinojs/lib": "^5.4.0",
     "@neutralinojs/neu": "^11.3.0",
+    "@danielx/civet": "^0.7.9",
     "@pixi/particle-emitter": "5.0.8",
     "@pixi/sound": "^5.2.3",
     "@trapezedev/project": "^7.0.10",
