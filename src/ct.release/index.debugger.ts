@@ -12,7 +12,7 @@ declare var rooms: typeof import('./rooms').default;
 declare var meta: typeof import('./index').meta;
 declare var sounds: typeof import('./sounds').default;
 
-import {init, getOptions, broadcastTo} from '../lib/multiwindow';
+import {sendEvent, run} from '../lib/buntralino-client';
 
 const hints = [{
     title: 'List copies of a template',
@@ -23,6 +23,9 @@ const hints = [{
 }, {
     title: 'Destroy all copies of a template',
     code: 'templates.list[\'YourTemplateName\'].forEach(copy => copy.kill = true);'
+}, {
+    title: 'Get values of template\'s copies',
+    code: 'templates.list[\'YourTemplateName\'].map(copy => copy.hp);'
 }];
 
 // eslint-disable-next-line no-console
@@ -49,84 +52,63 @@ for (const hint of hints) {
         return bytes.buffer;
     };
 
-    const opts = getOptions() as {
-        p: number,
-        t: string
-    };
-    if (!opts.p || !opts.t) {
-        return;
-    }
-    (window as any).CTJSDEBUGGER = true;
-    (window as any).NL_TOKEN = sessionStorage.NL_TOKEN = opts.t;
-    (window as any).NL_PORT = opts.p;
     Neutralino.init();
-    init('game');
-    const {app, os, events, filesystem} = Neutralino;
-    Neutralino.window.show();
-
-    events.on('reloadGame', () => {
-        window.location.reload();
-    });
-    events.on('stopDebugging', () => {
-        app.exit();
-    });
+    const {os, events, filesystem} = Neutralino;
 
     Neutralino.events.on('windowClose', () => {
-        broadcastTo('ide', 'stopDebugging');
+        run('debugExit');
+    });
+
+    events.on('debugToggleScreenshot', async () => {
+        const newFullscreen = !(await Neutralino.window.isFullScreen());
+        if (newFullscreen) {
+            await Neutralino.window.setFullScreen();
+        } else {
+            await Neutralino.window.exitFullScreen();
+        }
+        sendEvent('debugToolbar', newFullscreen ? 'debugFullscreen' : 'debugExitFullscreen');
+    });
+
+    events.on('debugScreenshot', async () => {
+        const renderTexture = PIXI.RenderTexture.create({
+            width: pixiApp.renderer.width,
+            height: pixiApp.renderer.height
+        });
+        pixiApp.renderer.render(pixiApp.stage, {
+            renderTexture
+        });
+        var canvas = pixiApp.renderer.extract.canvas(renderTexture);
+        var dataURL = canvas.toDataURL!('image/png').replace(/^data:image\/\w+;base64,/, '');
+        const dateTime = (new Date()).toLocaleString()
+            .replace(/[.:]/g, '-')
+            .replace(/,/g, '');
+        const savePath = await os.showSaveDialog(void 0, {
+            defaultPath: `${meta.name} ${dateTime}.png`,
+            filters: [{
+                name: 'PNG Images',
+                extensions: ['png']
+            }]
+        });
+        filesystem.writeBinaryFile(savePath, base64ToArrayBuffer(dataURL) as ArrayBuffer);
     });
 
     let lastGameSpeed: number;
-    events.on('debugActions', async (event: CustomEvent) => {
-        switch (event.detail) {
-        case 'toggleFullscreen': {
-            const newFullscreen = !(await Neutralino.window.isFullScreen());
-            if (newFullscreen) {
-                await Neutralino.window.setFullScreen();
-            } else {
-                await Neutralino.window.exitFullScreen();
-            }
-            broadcastTo('debugToolbar', 'gameEvents', newFullscreen ? 'fullscreen' : 'exitFullscreen');
-        } break;
-        case 'makeScreenshot': {
-            const renderTexture = PIXI.RenderTexture.create({
-                width: pixiApp.renderer.width,
-                height: pixiApp.renderer.height
-            });
-            pixiApp.renderer.render(pixiApp.stage, {
-                renderTexture
-            });
-            var canvas = pixiApp.renderer.extract.canvas(renderTexture);
-            var dataURL = canvas.toDataURL!('image/png').replace(/^data:image\/\w+;base64,/, '');
-            const dateTime = (new Date()).toLocaleString()
-                .replace(/[.:]/g, '-')
-                .replace(/,/g, '');
-            const savePath = await os.showSaveDialog(void 0, {
-                defaultPath: `${meta.name} ${dateTime}.png`,
-                filters: [{
-                    name: 'PNG Images',
-                    extensions: ['png']
-                }]
-            });
-            filesystem.writeBinaryFile(savePath, base64ToArrayBuffer(dataURL));
-        } break;
-        case 'togglePause':
-            if (settings.gameSpeed === 0) {
-                settings.gameSpeed = lastGameSpeed || 1;
-            } else {
-                lastGameSpeed = settings.gameSpeed;
-                settings.gameSpeed = 0;
-            }
-            broadcastTo('debugToolbar', 'gameEvents', settings.gameSpeed === 0 ? 'paused' : 'unpaused');
-            break;
-        case 'restartRoom':
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            rooms.restart();
-            break;
-        case 'restartGame':
-            sounds.stop();
-            rooms.switch(rooms.starting);
-            break;
-        default:
+    events.on('debugTogglePause', () => {
+        if (settings.gameSpeed === 0) {
+            settings.gameSpeed = lastGameSpeed || 1;
+        } else {
+            lastGameSpeed = settings.gameSpeed;
+            settings.gameSpeed = 0;
         }
+        sendEvent('debugToolbar', settings.gameSpeed === 0 ? 'debugPaused' : 'debugUnpaused');
+    });
+
+    events.on('debugRestartGame', () => {
+        sounds.stop();
+        rooms.switch(rooms.starting);
+    });
+
+    events.on('debugRestartRoom', () => {
+        rooms.restart();
     });
 })();

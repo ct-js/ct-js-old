@@ -26,14 +26,73 @@ const functionMap: Record<string, (payload: any) => Promise<any>> = {
     ttf2woff,
     getNetInterfaces,
     minifyCss,
-    minifyHtml
+    minifyHtml,
+
+    debugBootstrap: async (opts: {
+        link: string,
+        dpr: number
+    }) => {
+        let gamePosition: Awaited<ReturnType<typeof buntralino.getPosition>>,
+            gameSize: Awaited<ReturnType<typeof buntralino.getSize>>;
+        await Promise.all([
+            buntralino.create(opts.link, {
+                name: 'game',
+                injectGlobals: true
+            })
+            .then(() => Promise.all([
+                buntralino.getPosition('game'),
+                buntralino.getSize('game')
+            ]))
+            .then(([position, size]) => {
+                [gamePosition, gameSize] = [position, size];
+            }),
+
+            buntralino.create('', {
+                name: 'debugToolbar',
+                hidden: true
+            })
+        ]);
+
+        const toolbarWidth = 440 * opts.dpr,
+              toolbarHeight = 50 * opts.dpr;
+        const x = gamePosition!.x + gameSize!.width! / 2 - toolbarWidth / 2,
+              {y} = gamePosition!;
+        buntralino.setSize('debugToolbar', {
+            width: toolbarWidth,
+            height: toolbarHeight
+        });
+        buntralino.move('debugToolbar', x, y);
+        buntralino.show('debugToolbar');
+    },
+    debugReloadGame: () => buntralino.reload('game'),
+    debugExit: () => {
+        buntralino.exit('game');
+        buntralino.exit('debugToolbar');
+        buntralino.sendEvent('ide', 'debugFinished');
+        return Promise.resolve();
+    },
+    debugToggleQrs: async () => {
+        if (buntralino.isConnectionOpen('qrs')) {
+            await buntralino.exit('qrs');
+        } else {
+            const [pos, size] = await Promise.all([
+                buntralino.getPosition('debugToolbar'),
+                buntralino.getSize('debugToolbar')
+            ]);
+            await buntralino.create('', {
+                name: 'qrs',
+                width: 600,
+                height: 800,
+                x: pos!.x + size.width! / 2 - 300,
+                y: pos!.y + size.height! + 10
+            });
+        }
+    },
+    debugFocusGame: () => buntralino.focus('game')
 };
 
 buntralino.registerMethodMap(functionMap);
 
 await buntralino.create('/', {
     name: 'ide'
-});
-await buntralino.create('/', {
-    name: 'ide2'
 });

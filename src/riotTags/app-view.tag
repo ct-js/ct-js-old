@@ -129,7 +129,6 @@ app-view.flexcol
         const {isDev} = require('src/lib/platformUtils');
         const {run} = require('src/lib/buntralino-client');
         const {getDirectories} = require('src/lib/platformUtils');
-        const {init, createWindow, sendMessage, awaitConnection, shareConnections, getPosition, getSize, setPosition, show, focus, broadcastTo} = require('src/lib/multiwindow');
         const {exportCtProject} = require('src/lib/exporter');
         this.editorMap = resources.editorMap;
         this.iconMap = resources.resourceToIconMap;
@@ -466,8 +465,6 @@ app-view.flexcol
             }
         });
 
-        let debugToolbarSpawned = false;
-        init('ide');
         this.runProject = async () => {
             if (this.exportingProject) {
                 return;
@@ -486,49 +483,13 @@ app-view.flexcol
                     os.open(debugServer.url);
                 } else if (this.debugging) {
                     // Restart the game as we already have the tab opened
-                    broadcastTo('game', 'reloadGame');
+                    run('debugReloadGame');
                 } else {
                     this.debugging = true;
-                    debugToolbarSpawned = false;
-                    const debuggerWidth = 440;
-                    await Promise.all([
-                        createWindow('game', '/debugBridge.html', {
-                            title: `${window.currentProject.settings.authoring.title || 'Untitled ct.js game'} (debug)`,
-                            enableInspector: true,
-                            hidden: true,
-                            processArgs: '--enable-extensions=false'
-                        }, {
-                            url: debugServer.url
-                        }),
-                        createWindow('debugToolbar', '/gameTools.html', {
-                            title: this.vocGlob.debugTools,
-                            enableInspector: isDev(),
-                            borderless: true,
-                            maximizable: false,
-                            hidden: true,
-                            width: debuggerWidth,
-                            height: 40,
-                            minWidth: debuggerWidth,
-                            minHeight: 40,
-                            maxWidth: debuggerWidth,
-                            maxHeight: 40,
-                            alwaysOnTop: true,
-                            processArgs: `--enable-extensions=false ${isDev() ? '--ctjs-devmode' : ''} --gameport=${debugServer.port}`
-                        })
-                    ]);
-                    shareConnections('game', ['debugToolbar']);
-                    shareConnections('debugToolbar', ['game']);
-                    const [position, size] = await Promise.all([
-                        getPosition('game'),
-                        getSize('game')
-                    ]);
-                    setPosition(
-                        'debugToolbar',
-                        position.x + size.width / 2 - debuggerWidth / 2,
-                        position.y + 10
-                    );
-                    await show('debugToolbar');
-                    focus('game');
+                    await run('debugBootstrap', {
+                        link: debugServer.url,
+                        dpr: window.devicePixelRatio
+                    });
                 }
             } catch(e) {
                 this.exporterError = e;
@@ -539,30 +500,17 @@ app-view.flexcol
                 this.update();
             }
         };
-        const openExternalListener = () => {
-            const {os} = Neutralino;
-            os.open(debugServer.url);
-        };
-        const stopDebuggingListener = () => {
-            sendMessage('game', 'app.exit');
-            sendMessage('debugToolbar', 'app.exit');
+        const debugFinishedListener = () => {
             this.debugging = false;
             this.update();
         };
-        const netInterfacesListener = async () => {
-            const [interfaces] = await Promise.all([
-                run('getNetInterfaces'),
-                awaitConnection('qrCodes')
-            ]);
-            broadcastTo('qrCodes', 'netConnections', interfaces);
+        const debugOpenExtListener = () => {
+            Neutralino.os.openExternal(debugServer.url);
         };
-        Neutralino.events.on('openDebugExternal', openExternalListener);
-        Neutralino.events.on('stopDebugging', stopDebuggingListener);
-        Neutralino.events.on('getConnections', netInterfacesListener);
+        Neutralino.events.on('debugFinished', debugFinishedListener);
+        Neutralino.events.on('debugOpenExternal', debugOpenExtListener);
         this.on('unmount', () => {
-            Neutralino.events.off('openDebugExternal', openExternalListener);
-            Neutralino.events.off('stopDebugging', stopDebuggingListener);
-            Neutralino.events.off('getConnections', netInterfacesListener);
+            Neutralino.events.off('debugFinished', debugFinishedListener);
         });
 
         this.runProjectAlt = async () => {

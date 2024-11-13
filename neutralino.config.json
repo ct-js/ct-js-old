@@ -26,6 +26,7 @@
         "debug.log",
         "storage.*",
         "clipboard.*",
+        "resources.*",
         "computer.getMemoryInfo",
         "computer.getOSInfo"
     ],
@@ -52,8 +53,8 @@
         "binaryName": "ctjs",
         "resourcesPath": "/app/",
         "extensionsPath": "/bgServices/",
-        "binaryVersion": "5.3.0",
-        "clientVersion": "5.3.0",
+        "binaryVersion": "5.4.0",
+        "clientVersion": "5.4.0",
         "clientLibrary": "/neutralinoClient/neutralino.js",
         "distributionPath": "/build",
         "autoReloadExclude": "\\.css$"

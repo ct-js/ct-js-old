@@ -1,7 +1,7 @@
 import {getUid} from './utils';
 import type {Connection} from './connections';
 // eslint-disable-next-line no-duplicate-imports
-import {getConnectionByName} from './connections';
+import {getConnectionByName, dropConnection, awaitConnection} from './connections';
 import {evalsMap, type PromiseRejectCallback, type PromiseResolveCallback} from './evals';
 
 const ensureConnection = (target: Connection | string): Connection => {
@@ -14,8 +14,19 @@ const ensureConnection = (target: Connection | string): Connection => {
     }
     return target;
 };
+const ensureName = (target: Connection | string): string => {
+    if (typeof target === 'string') {
+        return target;
+    }
+    return target.name;
+};
 
-export const sendNeuMethod = (connection: Connection, method: string, payload?: unknown) => {
+export const sendNeuMethod = (
+    target: Connection | string,
+    method: string,
+    payload?: unknown
+): Promise<unknown> => {
+    const connection = ensureConnection(target);
     const id = getUid();
     connection.ws.send(JSON.stringify({
         id,
@@ -25,7 +36,7 @@ export const sendNeuMethod = (connection: Connection, method: string, payload?: 
         accessToken: connection.neuToken
     }));
     return new Promise((resolve, reject) => {
-        const listener = (e: MessageEvent<any>): any => {
+        const listener = (e: MessageEvent<string>) => {
             const message = JSON.parse(e.data);
             if (message.id === id) {
                 connection.ws.removeEventListener('message', listener);
@@ -38,7 +49,7 @@ export const sendNeuMethod = (connection: Connection, method: string, payload?: 
         connection.ws.addEventListener('message', listener);
     });
 };
-export const sendEvent = (connection: Connection, event: string, payload: unknown) => {
+export const sendEvent = (connection: Connection | string, event: string, payload?: unknown) => {
     sendNeuMethod(connection, 'events.broadcast', {
         event,
         // eslint-disable-next-line id-blacklist
@@ -56,7 +67,7 @@ export const setAlwaysOnTop = (target: Connection | string, onTop: boolean) => s
 });
 export const setSize = async (
     target: Connection | string,
-    options: Neutralino.window.WindowOptions
+    options: Neutralino.window.WindowSizeOptions
 ) => {
     target = ensureConnection(target);
     const sizeOptions = await getSize(target);
@@ -93,6 +104,16 @@ export const evalJs = (target: Connection | string, js: string) => {
     });
     return promise;
 };
-export const navigate = (target: Connection | string, url: string) => sendEvent(ensureConnection(target), 'buntralinoNavigate', {
-    url
-});
+
+export const navigate = (target: Connection | string, url: string) => {
+    dropConnection(ensureName(target));
+    sendEvent(ensureConnection(target), 'buntralinoNavigate', {
+        url
+    });
+    return awaitConnection(ensureName(target));
+};
+export const reload = (target: Connection | string) => {
+    dropConnection(ensureName(target));
+    sendEvent(ensureConnection(target), 'buntralinoReload', {});
+    return awaitConnection(ensureName(target));
+};

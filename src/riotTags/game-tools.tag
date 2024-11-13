@@ -3,10 +3,10 @@ game-tools.flexrow.aButtonGroup(class="{opts.class}")
         svg.feather(onclick="{hello}")
             use(xlink:href="#dragger-vertical")
     .debugger-toolbar-aDivider
-    .debugger-toolbar-aButton(onclick="{sendAction('toggleFullscreen')}" title="{gameFullscreen? voc.exitFullscreen : voc.enterFullscreen}")
+    .debugger-toolbar-aButton(onclick="{sendEventToGame('debugToggleFullscreen')}" title="{gameFullscreen? voc.exitFullscreen : voc.enterFullscreen}")
         svg.feather
             use(xlink:href="#{gameFullscreen? 'minimize' : 'maximize'}-2")
-    .debugger-toolbar-aButton(onclick="{sendAction('makeScreenshot')}" title="{voc.screenshot}")
+    .debugger-toolbar-aButton(onclick="{sendEventToGame('debugScreenshot')}" title="{voc.screenshot}")
         svg.feather
             use(xlink:href="#camera")
     .debugger-toolbar-aButton(onclick="{requestOpenExternal}" title="{voc.openExternal}")
@@ -16,13 +16,13 @@ game-tools.flexrow.aButtonGroup(class="{opts.class}")
         svg.feather
             use(xlink:href="#qr-code")
     .debugger-toolbar-aDivider
-    .debugger-toolbar-aButton(onclick="{sendAction('togglePause')}" title="{gamePaused? voc.resume : voc.pause}")
+    .debugger-toolbar-aButton(onclick="{sendEventToGame('debugTogglePause')}" title="{gamePaused? voc.resume : voc.pause}")
         svg.feather
             use(xlink:href="#{gamePaused? 'play' : 'pause'}")
-    .debugger-toolbar-aButton(onclick="{sendAction('restartRoom')}" title="{voc.restartRoom}")
+    .debugger-toolbar-aButton(onclick="{sendEventToGame('debugRestartRoom')}" title="{voc.restartRoom}")
         svg.feather
             use(xlink:href="#room-reload")
-    .debugger-toolbar-aButton(onclick="{sendAction('restartGame')}" title="{voc.restartGame}")
+    .debugger-toolbar-aButton(onclick="{sendEventToGame('debugRestartGame')}" title="{voc.restartGame}")
         svg.feather
             use(xlink:href="#rotate-cw")
     .debugger-toolbar-aDivider
@@ -34,22 +34,20 @@ game-tools.flexrow.aButtonGroup(class="{opts.class}")
         this.mixin(require('src/lib/riotMixins/voc').default);
 
         const {isDev} = require('src/lib/platformUtils');
-        const {init, broadcastTo, focus, createWindow, isClosed, shareConnections, exit} = require('src/lib/multiwindow');
+        const {run, sendEvent, focus} = require('src/lib/buntralino-client');
         init('debugToolbar');
 
         this.gameFullscreen = false;
         this.gamePaused = false;
-        this.sendAction = action => () => {
-            broadcastTo('game', 'debugActions', action);
-            focus('game');
+        this.sendEventToGame = action => () => {
+            sendEvent('game', action);
+            run('debugFocusGame');
         };
         this.requestOpenExternal = () => {
-            broadcastTo('ide', 'openDebugExternal');
-            focus('game');
+            sendEvent('ide', 'debugOpenExternal')
         };
         this.requestStopDebugging = () => {
-            broadcastTo('ide', 'stopDebugging');
-            focus('game');
+            run('debugExit');
         };
 
         // used to prevent double-clicking when async actions are still executing
@@ -62,63 +60,28 @@ game-tools.flexrow.aButtonGroup(class="{opts.class}")
         });
 
         this.toggleQrCodes = async () => {
-            if (isClosed('qrCodes')) {
-                this.awaitingQr = true;
-                const myPosition = await Neutralino.window.getPosition();
-                console.log(myPosition);
-                const qrWidth = 560,
-                      qrHeight = 640;
-                const gameport = Number(window.NL_ARGS
-                    .find(arg => arg.includes('--gameport='))
-                    .split('=')[1]);
-                await createWindow('qrCodes', '/gameToolsQrs.html', {
-                    processArgs: `--enable-extensions=false ${isDev() ? '--ctjs-devmode' : ''} --gameport=${gameport}`,
-                    width: qrWidth,
-                    height: qrHeight,
-                    minWidth: qrWidth,
-                    minHeight: qrHeight,
-                    maxWidth: qrWidth,
-                    maxHeight: qrHeight,
-                    x: myPosition.x - (qrWidth - myWidth) / 2,
-                    y: myPosition.y + (myPosition.y > 600 ? -(qrHeight - 50) : 50),
-                    enableInspector: isDev(),
-                    borderless: true,
-                    hidden: true,
-                    title: 'QR codes for debugging your game'
-                });
-                shareConnections('qrCodes', ['ide']);
-                shareConnections('ide', ['qrCodes']);
-                this.awaitingQr = false;
-                this.update();
-            } else {
-                await exit('qrCodes');
-                this.awaitingQr = false;
-                this.update();
-            }
+            this.awaitingQr = true;
+            this.update();
+            await run('debugToggleQrs');
+            this.awaitingQr = false;
+            this.update();
         };
 
-        Neutralino.events.on('gameEvents', e => {
-            console.debug('Received gameEvents', e.detail);
-            switch (e.detail) {
-            case 'paused':
-                this.gamePaused = true;
-                break;
-            case 'unpaused':
-                this.gamePaused = false;
-                break;
-            case 'fullscreen':
-                this.gameFullscreen = true;
-                break;
-            case 'exitFullscreen':
-                this.gameFullscreen = false;
-                break;
-            }
+        Neutralino.events.on('debugPaused', e => {
+            this.gamePaused = true;
             this.update();
         });
-        Neutralino.events.on('ctjsDebugIde', e => {
-            if (e.detail === 'closeToolbar') {
-                Neutralino.app.exit();
-            }
+        Neutralino.events.on('debugUnpaused', e => {
+            this.gamePaused = false;
+            this.update();
+        });
+        Neutralino.events.on('debugFullscreen', e => {
+            this.gameFullscreen = true;
+            this.update();
+        });
+        Neutralino.events.on('debugExitFullscreen', e => {
+            this.gameFullscreen = false;
+            this.update();
         });
 
         this.on('mount', () => {

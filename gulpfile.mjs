@@ -286,13 +286,6 @@ const watchCtJsLib = () => {
     ], buildCtJsLib);
 };
 
-const bakeDebugBridge = () => esbuild({
-    ...baseEsbuildConfig,
-    entryPoints: ['./src/debugBridge'],
-    outfile: './app/data/debugBridge.js',
-    sourcemap: 'inline'
-});
-
 const compileScripts = gulp.series(compileRiot, concatScripts);
 
 const makeIconAtlas = () =>
@@ -338,7 +331,6 @@ export const build = gulp.parallel([
         bundleIdeScripts
     ),
     buildCtJsLib,
-    bakeDebugBridge,
     bakeTypedefs,
     bakeCtTypedefs,
     copyNeutralinoClient
@@ -381,7 +373,7 @@ const debugUrl = '127.0.0.1:6499/debug';
 const launchApp = () => $({
     stderr: 'inherit',
     stdout: 'inherit'
-})`bun run ./src/bun/index.js`;
+})`bun run  --inspect=${debugUrl} --watch ./src/bun/index.js`;
 
 const launchDevMode = done => {
     watch();

@@ -112,12 +112,12 @@ export const getDirectories = (): Promise<CtDirectories> => {
     }
     dirsPromise = (async (): Promise<CtDirectories> => {
         const ct = await getWritableDir();
-        await fs.ensureDir(path.join(ct, 'Exports'));
+        await fs.ensureDir(path.join(ct, 'Export'));
         await fs.ensureDir(path.join(ct, 'Builds'));
         await fs.ensureDir(path.join(ct, 'Projects'));
         return {
             ct,
-            exports: path.join(ct, 'Exports'),
+            exports: path.join(ct, 'Export'),
             builds: path.join(ct, 'Builds'),
             projects: path.join(ct, 'Projects'),
             gallery: isDev() ? `${NL_CWD}/bundledAssets` : `${NL_CWD}/assets`,

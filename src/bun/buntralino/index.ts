@@ -1,22 +1,43 @@
-import {callMethod} from './methodLibrary';
 import {spawnNeutralino} from './spawnNeutralino';
 import * as neuWindow from './window';
 import {getUid} from './utils';
 import type {Connection} from './connections';
 // eslint-disable-next-line no-duplicate-imports
-import {dropConnection, registerConnection, getConnectionByToken, connections} from './connections';
-import {evalsMap} from './evals';
+import {dropConnection, registerConnection, getConnectionByToken, awaitConnection} from './connections';
+import fulfillRequests from './requests';
 
 export {
     registerMethod,
     registerMethodMap
 } from './methodLibrary';
 export * from './window';
+export {isConnectionOpen} from './connections';
 
 interface WindowOptions {
     name?: string;
     useSavedState?: boolean;
-    [key: string]: unknown
+    title?: string;
+    icon?: string;
+    fullScreen?: boolean;
+    alwaysOnTop?: boolean;
+    enableInspector?: boolean;
+    borderless?: boolean;
+    maximize?: boolean;
+    hidden?: boolean;
+    maximizable?: boolean;
+    exitProcessOnClose?: boolean;
+    width?: number;
+    height?: number;
+    x?: number;
+    y?: number;
+    minWidth?: number;
+    minHeight?: number;
+    maxWidth?: number;
+    maxHeight?: number;
+    injectScript?: string;
+    injectGlobals?: boolean;
+    injectClientLibrary?: boolean;
+    processArgs?: string;
 }
 
 const awaitedNames = new Set<string>();
@@ -60,6 +81,7 @@ const receiver = Bun.serve({
                         token: connection.bunToken,
                         port: receiver.port
                     });
+                    // eslint-disable-next-line no-console
                     console.log(`🥟 Registered ${payload.name} window 💅`);
                 };
                 return;
@@ -71,51 +93,24 @@ const receiver = Bun.serve({
                 }));
                 return;
             }
-            if (payload.command === 'run') {
-                try {
-                    neuWindow.sendEvent(connection, 'buntralinoExecResult', {
-                        id: payload.id,
-                        // eslint-disable-next-line no-await-in-loop
-                        returnValue: await callMethod(payload.method, payload.payload)
-                    });
-                } catch (error) {
-                    neuWindow.sendEvent(connection, 'buntralinoExecResult', {
-                        id: payload.id,
-                        error: (error as Error).message ?? null,
-                        stack: (error as Error).stack ?? null
-                    });
-                }
-            } else if (payload.command === 'shutdown') {
-                connections.forEach(connection =>
-                    neuWindow.sendNeuMethod(connection, 'app.exit', {}));
-                // eslint-disable-next-line no-process-exit
-                process.exit(0);
-            } else if (payload.command === 'evalResult') {
-                const [resolve, reject] = evalsMap.get(payload.id)!;
-                if (payload.error) {
-                    const err = new Error('🥟🐞 evalJs failed for ' + connection.name + ': ' + payload.error +
-                        '\n\nClient-side stack trace:\n' + payload.stack);
-                    reject(err);
-                } else {
-                    resolve(payload.returnValue);
-                }
-                evalsMap.delete(payload.id);
-            }
+            await fulfillRequests(payload, connection);
         }
     }
 });
 
+// eslint-disable-next-line no-console
 console.log('🥟👂 Bun server listening on port ', receiver.port);
 
-const normalizeArgument = (arg: any) => {
+const normalizeArgument = (arg: unknown) => {
     if (typeof arg !== 'string') {
         return arg;
     }
-    arg = arg.trim();
-    if (arg.includes(' ')) {
-        arg = `"${arg}"`;
+    let str = arg as string;
+    str = str.trim();
+    if (str.includes(' ')) {
+        str = `"${str}"`;
     }
-    return arg;
+    return str;
 };
 
 export const create = async (url: string, options = {} as WindowOptions): Promise<string> => {
@@ -132,10 +127,10 @@ export const create = async (url: string, options = {} as WindowOptions): Promis
     const args = [];
     for (const key in options) {
         if (key === 'processArgs') {
-            continue;
+            args.push(options.processArgs as string);
         }
         const cliKey: string = key.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-        args.push(`--window-${cliKey}=${normalizeArgument(options[key])}`);
+        args.push(`--window-${cliKey}=${normalizeArgument(options[key as keyof WindowOptions])}`);
     }
 
     const proc = await spawnNeutralino([
@@ -145,9 +140,11 @@ export const create = async (url: string, options = {} as WindowOptions): Promis
         ...args
     ]);
     proc.exited.then(() => {
+        // eslint-disable-next-line no-console
         console.log('🥟🪦 Neutralino process exited with code', proc.exitCode);
         dropConnection(name);
     });
 
+    await awaitConnection(name);
     return id;
 };

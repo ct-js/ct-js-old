@@ -4,6 +4,7 @@ import path from 'path';
 import fs from '../neutralino-fs-extra';
 import {run} from '../buntralino-client';
 import {toArrayBuffer} from '../utils/imageUtils';
+import {isDev} from '../platformUtils';
 
 export const resizeIcon = async function (
     img: HTMLImageElement,
@@ -53,8 +54,18 @@ export const bakeFavicons = async function (
             iconRevision = await revHash(buff);
         }
     }
-    const img = await getDOMImageFromTexture(proj.settings.branding.icon, 'ct_ide.png'),
-          fsPath = proj.settings.branding.icon ? getTextureOrig(proj.settings.branding.icon, true) : path.resolve('ct_ide.png');
+    const img = await getDOMImageFromTexture(proj.settings.branding.icon, 'ct_ide.png');
+    let fsPath: string;
+    if (proj.settings.branding.icon && proj.settings.branding.icon !== -1) {
+        fsPath = getTextureOrig(proj.settings.branding.icon, true);
+    } else if (isDev()) {
+        fsPath = path.join(NL_CWD, 'app', 'ct_ide.png');
+    } else {
+        fsPath = path.join(NL_CWD, 'defaultIcon.png');
+        if (!(await fs.pathExists(fsPath))) {
+            await (Neutralino.resources.extractFile('/app/ct_ide.png', fsPath));
+        }
+    }
     const promises = [];
     for (const name in iconMap) {
         for (const size of iconMap[name as keyof typeof iconMap]) {

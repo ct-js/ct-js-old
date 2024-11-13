@@ -1,3 +1,5 @@
+import listeners from './listeners';
+
 const getUid = () => Date.now().toString(36) + Math.random().toString(36);
 
 let bunToken: string, bunPort: number, bunWs: WebSocket;
@@ -46,40 +48,13 @@ const readyPromise = new Promise<void>((resolve, reject) => {
                 bunPort = payload.detail.port;
                 bunWs = new WebSocket(`ws://localhost:${bunPort}`);
                 bunWs.onopen = () => {
+                    listeners(bunToken, bunWs);
                     // eslint-disable-next-line no-console
-                    console.log('⚛️🥟 Buntralino connected');
+                    console.log('⚛️🥟 Buntralino connected on port', bunPort);
                     readyResolve();
                 };
             };
             Neutralino.events.on('buntralinoRegisterParent', listener);
-
-            const executor = async (payload: {
-                detail: {
-                    js: string,
-                    requestId: string
-                }
-            }) => {
-                try {
-                    // eslint-disable-next-line no-eval
-                    const val = await (0, eval)(payload.detail.js);
-                    // ⬆️ (0, eval) is used to execute the code in global scope
-                    bunWs.send(JSON.stringify({
-                        token: bunToken,
-                        command: 'execResult',
-                        id: payload.detail.requestId,
-                        returnValue: val
-                    }));
-                } catch (e) {
-                    bunWs.send(JSON.stringify({
-                        token: bunToken,
-                        command: 'execResult',
-                        id: payload.detail.requestId,
-                        error: e.message,
-                        stack: e.stack
-                    }));
-                }
-            };
-            Neutralino.events.on('buntralinoEval', executor);
         } catch (error) {
             readyReject(error);
             console.error('⚛️ Buntralino failed with', error);
@@ -87,7 +62,7 @@ const readyPromise = new Promise<void>((resolve, reject) => {
     });
 })();
 
-export const run = async (methodName: string, payload: unknown): Promise<unknown> => {
+export const run = async (methodName: string, payload?: unknown): Promise<unknown> => {
     await readyPromise;
     const awaitedResponseId = getUid();
     bunWs.send(JSON.stringify({
@@ -124,6 +99,31 @@ export const shutdown = () => {
         command: 'shutdown'
     }));
 };
+
+/**
+ * Sends an event with additional event.detail value to all the Neutralino instances
+ */
+export const broadcast = (eventName: string, payload: unknown) => {
+    bunWs.send(JSON.stringify({
+        token: bunToken,
+        command: 'broadcast',
+        event: eventName,
+        payload
+    }));
+};
+/**
+ * Sends an event to a specific named Neutralino instance.
+ */
+export const sendEvent = (target: string, eventName: string, payload?: unknown) => {
+    bunWs.send(JSON.stringify({
+        token: bunToken,
+        command: 'sendEvent',
+        event: eventName,
+        target,
+        payload
+    }));
+};
+
 export const ready = readyPromise;
 
 export default {
