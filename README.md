@@ -1,3 +1,10 @@
+# ⚠️ New repository here: https://github.com/ct-js/ct-js
+
+This is an older repo that has large binary files and other junk in git history left due to early stupidity or human errors.
+The new repo is at least 5 times smaller in size and clean from those errors.
+
+⚠️ You will need to either hard-reset onto the desired commit in the new repo or re-clone/re-fork the git repository on your side.
+
 ![](https://raw.githubusercontent.com/ct-js/ct-js/develop/branding/GithubHeader.png)
 
 [![](https://img.shields.io/badge/license-MIT-informational?style=flat-square)](https://github.com/ct-js/ct-js/blob/develop/LICENSE) [![GitHub tag (latest by date)](https://img.shields.io/github/tag-date/ct-js/ct-js?label=version&style=flat-square)](https://github.com/ct-js/ct-js/releases) [![Gitlab CI master branch](https://img.shields.io/gitlab/pipeline-status/CoMiGo/ct-js?branch=master&label=ct.js%20builds&style=flat-square)](https://gitlab.com/CoMiGo/ct-js/-/commits/master) [![Gitlab CI develop branch](https://img.shields.io/gitlab/pipeline-status/CoMiGo/ct-js?branch=develop&label=nightly%20builds&style=flat-square)](https://gitlab.com/CoMiGo/ct-js/-/commits/develop)
