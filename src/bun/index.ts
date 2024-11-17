@@ -37,7 +37,7 @@ const functionMap: Record<string, (payload: any) => Promise<any>> = {
         await Promise.all([
             buntralino.create(opts.link, {
                 name: 'game',
-                injectGlobals: true
+                injectClientLibrary: true
             })
             .then(() => Promise.all([
                 buntralino.getPosition('game'),
@@ -47,7 +47,7 @@ const functionMap: Record<string, (payload: any) => Promise<any>> = {
                 [gamePosition, gameSize] = [position, size];
             }),
 
-            buntralino.create('', {
+            buntralino.create('/gameTools.html', {
                 name: 'debugToolbar',
                 hidden: true
             })
@@ -79,7 +79,7 @@ const functionMap: Record<string, (payload: any) => Promise<any>> = {
                 buntralino.getPosition('debugToolbar'),
                 buntralino.getSize('debugToolbar')
             ]);
-            await buntralino.create('', {
+            await buntralino.create('/gameToolsQrs.html', {
                 name: 'qrs',
                 width: 600,
                 height: 800,

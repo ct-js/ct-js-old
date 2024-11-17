@@ -379,15 +379,6 @@ const launchDevMode = done => {
     watch();
     launchApp();
     done();
-    console.log(`
- ╭──────────────────────────────────────────────╮
- │                                              ├──╮
- │  Debug background bun server at              │  │
- │  https://debug.bun.sh/#${debugUrl}  │  │
- │                                              │  │
- ╰─┬────────────────────────────────────────────╯  │
-   ╰───────────────────────────────────────────────╯
-`);
 };
 
 

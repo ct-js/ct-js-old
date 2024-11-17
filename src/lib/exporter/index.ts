@@ -461,7 +461,7 @@ const exportCtProject = async (
     }
 
     if (debug) {
-        buffer = (await sources['desktopPack/game/neutralino.js' as keyof typeof sources]) +
+        buffer = /*(await sources['desktopPack/game/neutralino.js' as keyof typeof sources]) +*/
                  (await sources['debugger.js' as keyof typeof sources]) +
                  '\n' + buffer;
     }

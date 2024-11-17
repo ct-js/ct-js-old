@@ -35,7 +35,6 @@ game-tools.flexrow.aButtonGroup(class="{opts.class}")
 
         const {isDev} = require('src/lib/platformUtils');
         const {run, sendEvent, focus} = require('src/lib/buntralino-client');
-        init('debugToolbar');
 
         this.gameFullscreen = false;
         this.gamePaused = false;
